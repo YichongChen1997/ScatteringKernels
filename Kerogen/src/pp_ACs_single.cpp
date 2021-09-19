@@ -9,6 +9,8 @@
 using namespace std;
 const float PI = 3.1415;
 
+vector<double> linspace(double min, double max, size_t N);
+
 // Determine whether the two numbers have same sign
 bool sameSign(double num1, double num2);
 
@@ -28,28 +30,36 @@ int main()
     double refVelocity = refLength / refTime; // 1 Angstrom / 1 fs
     double refPressure = 101325;
 
-    //**** CHANGE ***************
+    //**** CHANGE **************
+
     double Tw = 423;                    // temperature of wall (Kelvin)
     double vM = sqrt(2 * kB * Tw / mi); // most probable speed
+    double MCsigma = 3.545;             // diameter of methane
 
+    double rCut = 15;
     ifstream Height("Height.dat", ios::in);
     double H;
     Height >> H;
-    double rCut = 15;
 
     ifstream nSteps("nTimeSteps.dat", ios::in);
     int nTimeSteps; // CHANGE, use command line: grep -o 'TIMESTEP' dump_meas.lammpstrj | wc -l
     nSteps >> nTimeSteps;
+
+    double binWidth = 10; // binwidth of velocity
+    int maxVout = vM * 4; // max output velocity
+    int nBins = ceil(maxVout / binWidth);
+
     // **************************
 
     ifstream data("dump_meas_gas.lammpstrj", ios::in);
-    ofstream fileAtom("AtomCollisions.txt", ios::out);
-    ofstream collisionTMAC("collision_vs_TMACs.txt", ios::out);
-    ofstream collisionNKEAC("collision_vs_NKEAC.txt", ios::out);
+
+    ofstream file5("NMACs_Single.txt", ios::out);
+    ofstream file6("TMACs_Single.txt", ios::out);
+    ofstream file7("NKEACs_Single.txt", ios::out);
 
     int nWallCollisions = 0;    // collect total number of collided molecules with wall
     int nStartedCollisions = 0; // collect number of collisions that have started
-    vector<int> nCollisions;    // number of collisions per molecule
+    vector<int> nCollisions;    // per molecule collect how many times molecule collided
 
     vector<bool> startFromMiddle;
     vector<bool> crossedStart;
@@ -69,6 +79,7 @@ int main()
     // the following is collision data ("start" = when the molecule enters rCut and
     // "end" = when the molecule has left rCut). Every row is a single atomic collision.
     // Note that one molecule can hit a wall multiple times. so it can be in this list many times
+
     vector<double> tEnter;
     vector<double> xEnter;
     vector<double> yEnter;
@@ -338,7 +349,8 @@ int main()
     {
         if (leftFromTop[i] == 1)
         {
-            if (AtomCollisions[i] <= 3) // single collision cases
+
+            if (AtomCollisions[i] <= 1) // single collision cases
             // if (AtomCollisions[i] == 1)
             {
                 // normal
@@ -425,7 +437,7 @@ int main()
         if (leftFromTop[i] == -1)
         {
 
-            if (AtomCollisions[i] <= 3) // single collision cases
+            if (AtomCollisions[i] <= 1) // single collision cases
             // if (AtomCollisions[i] == 1)
             {
                 // normal
@@ -526,144 +538,184 @@ int main()
     int SnPts = vNS.size();
     int MnPts = vNM.size();
 
-    double CoBinWidth = 1; // binwidth of collision distribution
-    int CoMax = 10;        // Max times of collisions
-    int CoBins = CoMax / CoBinWidth;
+    vector<double> range = linspace(0.1, 3.9, 39);
 
-    // Distribution of Collision Times
+    for (int n = 0; n < range.size(); n++)
     {
-        vector<double> distribution(CoBins, 0.0);
-        vector<double> bins(CoBins, 0.0);
+        double vTx_full = 0.0, vTxi_full = 0.0, vTx_meanF, vTxi_meanF;
+        double vN_full = 0.0, vNi_full = 0.0, vN_meanF, vNi_meanF;
 
-        for (i = 0; i < CoBins; i++)
+        double vTx_partial = 0.0, vTxi_partial = 0.0, vTx_meanP, vTxi_meanP;
+        double vN_partial = 0.0, vNi_partial = 0.0, vN_meanP, vNi_meanP;
+
+        double sigmaTx_f1 = 0.0, sigmaTx_f2;
+        double sigmaTx_p1 = 0.0, sigmaTx_p2;
+        double sigmaN_f1 = 0.0, sigmaN_f2;
+        double sigmaN_p1 = 0.0, sigmaN_p2;
+        double alphaN_p1 = 0.0, alphaN_p2;
+        double alphaN_f1 = 0.0, alphaN_f2;
+
+        int countN = 0, countTx = 0, countPositiveN = 0, countPositiveTx = 0;
+
+        for (int i = 0; i < SnPts; ++i)
         {
-            bins[i] = CoBinWidth * i;
-        }
 
-        for (i = 0; i < AtomCollisions.size(); i++)
-        {
-            bo = AtomCollisions[i] / CoBinWidth;
-
-            if (bo >= CoBins)
+            if ((vNiS[i] >= vM * 0.0) && (vNiS[i] < vM * 6))
             {
-                bo = CoBins - 1;
+                vNi_full += vNiS[i];
+                vN_full += vNS[i];
+                countPositiveN++;
             }
 
-            distribution[bo] += 1.0;
-            fileAtom << AtomCollisions[i] << endl;
+            if (vTxiS[i] >= 0.0)
+            {
+                vTxi_full += vTxiS[i];
+                vTx_full += vTxS[i];
+                countPositiveTx++;
+            }
+
+            if ((vNiS[i] > vM * (range[n] - 0.1)) && (vNiS[i] <= vM * (range[n] + 0.1)))
+            {
+                vNi_partial += vNiS[i];
+                vN_partial += vNS[i];
+                countN++;
+            }
+
+            if ((vTxiS[i] > vM * (range[n] - 0.1)) && (vTxiS[i] <= vM * (range[n] + 0.1)))
+            {
+                vTxi_partial += vTxiS[i];
+                vTx_partial += vTxS[i];
+                countTx++;
+            }
         }
+        cout << "countPositiveN is: " << countPositiveN << endl;
 
-        vector<double> probability(CoBins, 0.0);
-        double areaUnderGraph = 0.0;
-        for (i = 0; i < CoBins - 1; i++)
-        {
-            areaUnderGraph += (bins[i + 1] - bins[i]) * (distribution[i] + distribution[i + 1]) * 0.5;
-        }
+        vNi_meanP = vNi_partial / countN; // mean value of incident normal velocities within a partial range
+        vN_meanP = vN_partial / countN;
+        vTxi_meanP = vTxi_partial / countTx;
+        vTx_meanP = vTx_partial / countTx;
 
-        for (i = 0; i < CoBins; i++)
-        {
-            probability[i] = distribution[i] / areaUnderGraph;
-        }
-        ofstream file("CollisionDis.txt");
+        vTxi_meanF = vTxi_full / countPositiveTx; // mean value of incident tangential velocities for full range.
+        vTx_meanF = vTx_full / countPositiveTx;
+        vNi_meanF = vNi_full / countPositiveN;
+        vN_meanF = vN_full / countPositiveN;
 
-        for (i = 0; i < CoBins; i++)
-        {
-            file << bins[i] << " " << distribution[i] << " " << probability[i] << endl;
-        }
-    }
-    cout << "Collision Distribution Finished" << endl;
+        cout << "Mean value for vNi is: " << vNi_meanF << endl;
+        cout << "Mean value for vN is: " << vN_meanF << endl;
 
-    int collisionPts = 20;
-    vector<double> TMAC, TMAC2;
-    vector<double> vTx_meanF;
-    vector<double> vTxi_meanF;
-    TMAC.resize(collisionPts, 0.0);
-    TMAC2.resize(collisionPts, 0.0);
-    vTx_meanF.resize(collisionPts, 0.0);
-    vTxi_meanF.resize(collisionPts, 0.0);
+        // ********Tangential Momentum Accommodation Coefficients***********
 
-    for (n = 0; n < collisionPts; n++)
-    {
+        // TMAC (partial range), using general expression.
+        sigmaTx_p1 = (vTxi_partial - vTx_partial) / vTxi_partial;
+
+        // TMAC (partial range), using least-squares fitting
         double beta_nu = 0.0, beta_de = 0.0;
-        int countPositiveTx = 0;
 
-        for (int i = 0; i < nPts; i++)
+        for (int i = 0; i < SnPts; ++i)
         {
-            if (AtomCollisions[i] == n)
+            if ((vTxiS[i] > vM * (range[n] - 0.1)) && (vTxiS[i] <= vM * (range[n] + 0.1)))
             {
-                if (vxStart[i] > 0)
-                {
-                    vTxi_meanF[n] += vxStart[i];
-                    vTx_meanF[n] += vxEnd[i];
-                    countPositiveTx++;
-                }
+                beta_nu += (vTxiS[i] - vTxi_meanP) * (vTxS[i] - vTx_meanP);   // beta numerator
+                beta_de += (vTxiS[i] - vTxi_meanP) * (vTxiS[i] - vTxi_meanP); // denominator
             }
         }
-        vTxi_meanF[n] = vTxi_meanF[n] / countPositiveTx;
-        vTx_meanF[n] = vTx_meanF[n] / countPositiveTx;
+        sigmaTx_p2 = 1 - beta_nu / beta_de;
 
-        for (int i = 0; i < nPts; i++)
+        // TMAC (full range), using general expression
+        sigmaTx_f1 = (vTxi_meanF - vTx_meanF) / vTxi_meanF;
+
+        // TMAC (full range), using least-squares fitting
+        beta_nu = 0.0, beta_de = 0.0;
+
+        for (int i = 0; i < SnPts; ++i)
         {
-            if (AtomCollisions[i] == n)
+            beta_nu += (vTxiS[i] - vTxi_meanF) * (vTxS[i] - vTx_meanF);   // beta numerator
+            beta_de += (vTxiS[i] - vTxi_meanF) * (vTxiS[i] - vTxi_meanF); // beta donominator
+        }
+        sigmaTx_f2 = 1 - beta_nu / beta_de;
+
+        // ********Normal Momentum Accommodation Coefficients***************
+
+        // NMAC (partial range), using general expression.
+        sigmaN_p1 = (vNi_partial - vN_partial) / (vNi_partial - sqrt(PI) / 2 * vM * countN);
+
+        // NMAC (partial range), using least-squares fitting
+        beta_nu = 0.0, beta_de = 0.0;
+
+        for (int i = 0; i < SnPts; ++i)
+        {
+            if ((vNiS[i] > vM * (range[n] - 0.1)) && (vNiS[i] <= vM * (range[n] + 0.1)))
             {
-                beta_nu += (vxStart[i] - vTxi_meanF[n]) * (vxEnd[i] - vTx_meanF[n]);
-                beta_de += (vxStart[i] - vTxi_meanF[n]) * (vxStart[i] - vTxi_meanF[n]);
+                beta_nu += (vNiS[i] - vNi_meanP) * (vNS[i] - vN_meanP);   // beta numerator
+                beta_de += (vNiS[i] - vNi_meanP) * (vNiS[i] - vNi_meanP); // denominator
             }
         }
-        TMAC[n] = 1 - beta_nu / beta_de;
-        
-        TMAC2[n] = (vTxi_meanF[n] - vTx_meanF[n]) / vTxi_meanF[n];
+        sigmaN_p2 = 1 - beta_nu / beta_de;
 
-        collisionTMAC << n << " " << TMAC[n] << " " << TMAC2[n] << endl;
+        // NMAC (full range), using general expression
+        // sigmaN_f1 = (vNi_full - vN_full) / (vNi_full - sqrt(PI) / 2 * vM * countPositiveN);
+        sigmaN_f1 = (vNi_meanF - vN_meanF) / (vNi_meanF - sqrt(PI) * vM / 2);
+
+        // NMAC (full range), using least-squares fitting
+        beta_nu = 0.0, beta_de = 0.0;
+
+        for (int i = 0; i < SnPts; ++i)
+        {
+            beta_nu += (vNiS[i] - vNi_meanF) * (vNS[i] - vN_meanF);   // beta numerator
+            beta_de += (vNiS[i] - vNi_meanF) * (vNiS[i] - vNi_meanF); // beta donominator
+        }
+        sigmaN_f2 = 1 - beta_nu / beta_de;
+
+        // ********Kinetic Energy Accommodation Coefficients (Normal component)***************
+
+        // NKEAC (partial range), using general expression.
+        alphaN_p1 = (vNi_partial * vNi_partial - vN_partial * vN_partial) / (vNi_partial * vNi_partial - (sqrt(PI) / 2 * vM * countN) * (sqrt(PI) / 2 * vM * countN));
+
+        // NKEAC (partial range), using least-squares fitting
+        beta_nu = 0.0, beta_de = 0.0;
+
+        for (int i = 0; i < SnPts; ++i)
+        {
+            if ((vNiS[i] > vM * (range[n] - 0.1)) && (vNiS[i] <= vM * (range[n] + 0.1)))
+            {
+                beta_nu += (vNiS[i] * vNiS[i] - vNi_meanP * vNi_meanP) * (vNS[i] * vNS[i] - vN_meanP * vN_meanP);     // beta numerator
+                beta_de += (vNiS[i] * vNiS[i] - vNi_meanP * vNi_meanP) * (vNiS[i] * vNiS[i] - vNi_meanP * vNi_meanP); // denominator
+            }
+        }
+        alphaN_p2 = 1 - beta_nu / beta_de;
+
+        // NKEAC (full range), using general expression.
+        alphaN_f1 = (vNi_meanF * vNi_meanF - vN_meanF * vN_meanF) / (vNi_meanF * vNi_meanF - (sqrt(PI) * vM / 2) * (sqrt(PI) * vM / 2));
+
+        // NKEAC (full range), using least-squares fitting
+        beta_nu = 0.0, beta_de = 0.0;
+
+        for (int i = 0; i < SnPts; ++i)
+        {
+            beta_nu += (vNiS[i] * vNiS[i] - vNi_meanF * vNi_meanF) * (vNS[i] * vNS[i] - vN_meanF * vN_meanF);     // beta numerator
+            beta_de += (vNiS[i] * vNiS[i] - vNi_meanF * vNi_meanF) * (vNiS[i] * vNiS[i] - vNi_meanF * vNi_meanF); // beta donominator
+        }
+        alphaN_f2 = 1 - beta_nu / beta_de;
+
+        // ******************************************************************
+        file5 << range[n] << " " << sigmaN_p1 << " " << sigmaN_p2 << " " << sigmaN_f1 << " " << sigmaN_f2 << endl;
+        file6 << range[n] << " " << sigmaTx_p1 << " " << sigmaTx_p2 << " " << sigmaTx_f1 << " " << sigmaTx_f2 << endl;
+        file7 << range[n] << " " << alphaN_p1 << " " << alphaN_p2 << " " << alphaN_f1 << " " << alphaN_f2 << endl;
     }
 
-    vector<double> alphaN1, alphaN2;
-    vector<double> vN_meanF, vNi_meanF;
-
-    alphaN1.resize(collisionPts, 0.0);
-    alphaN2.resize(collisionPts, 0.0);
-    vN_meanF.resize(collisionPts, 0.0);
-    vNi_meanF.resize(collisionPts, 0.0);
-
-    for (n = 0; n < collisionPts; n++)
-    {
-        double beta_nu = 0.0, beta_de = 0.0;
-        int countPositiveN = 0;
-
-        for (int i = 0; i < nPts; i++)
-        {
-            if (AtomCollisions[i] == n)
-            {
-                if (vzStart[i] < 0)
-                {
-                    vNi_meanF[n] += abs(vzStart[i]);
-                    vN_meanF[n]  += abs(vzEnd[i]);
-                    countPositiveN++;
-                }
-            }
-        }
-
-        vNi_meanF[n] = vNi_meanF[n] / countPositiveN;
-        vN_meanF[n]  = vN_meanF[n] / countPositiveN;
-
-        alphaN1[n] = (vNi_meanF[n] * vNi_meanF[n] - vN_meanF[n] * vN_meanF[n]) / (vNi_meanF[n] * vNi_meanF[n] - (sqrt(PI) * vM / 2) * (sqrt(PI) * vM / 2));
-
-        for (int i = 0; i < nPts; i++)
-        {
-            if (AtomCollisions[i] == n)
-            {
-                beta_nu += (vzStart[i] * vzStart[i] - vNi_meanF[n] * vNi_meanF[n]) * (vzEnd[i] * vzEnd[i] - vN_meanF[n] * vN_meanF[n]);
-                beta_de += (vzStart[i] * vzStart[i] - vNi_meanF[n] * vNi_meanF[n]) * (vzStart[i] * vzStart[i] - vNi_meanF[n] * vNi_meanF[n]);
-            }
-        }
-
-        alphaN2[n] = 1 - beta_nu / beta_de;
-
-        collisionNKEAC << n << " " << alphaN1[n] << " " << alphaN2[n] << endl;
-    }
-
-    cout << "Analysis Ended" << endl;
     return 0;
+}
+
+// Create a vector of evenly spaced numbers.
+vector<double> linspace(double min, double max, size_t N)
+{
+    vector<double> linspace;
+    double delta = (max - min) / double(N - 1);
+    for (int i = 0; i < N; i++)
+    {
+        linspace.push_back(min + i * delta);
+    }
+    return linspace;
 }
 
 bool sameSign(double num1, double num2)

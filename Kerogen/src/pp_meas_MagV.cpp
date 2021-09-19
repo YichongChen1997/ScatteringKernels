@@ -28,11 +28,11 @@ int main()
 
     double Tw = 423;                    // temperature of wall (Kelvin)
     double vM = sqrt(2 * kB * Tw / mi); // most probable speed
-    
-    ifstream Height("Height.dat", ios::in);
-    double H;
-    Height >> H;
-    double rCut = 15;
+
+    // int tSkip = 500; // no of output in dump command
+    // double deltaT = 2.0; // MD timestep
+
+    double H = 200;
     double rCut = 15;
 
     int nTimeSteps = 2000; // CHANGE, use command line: grep -o 'TIMESTEP' dump_meas_gas.lammpstrj | wc -l

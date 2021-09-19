@@ -37,7 +37,7 @@ int main()
 
     int skipTimeStep = 101; // when to start measuring bins -> after steady state
     int tSkip = 500;
-    double deltaT = 2.0;
+    double deltaT = 0.5;
 
     double binWidth = 1;    // coarse
     double binWidth2 = 0.2; // fine

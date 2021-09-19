@@ -28,7 +28,9 @@ int main()
     double vM = sqrt(2 * kB * Tw / mi); // most probable speed
 
     //**** CHANGE **************
-    double H = 200;
+    ifstream Height("Height.dat", ios::in);
+    double H;
+    Height >> H;
     double rCut = 15;
 
     ifstream nSteps("nTimeSteps.dat", ios::in);

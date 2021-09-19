@@ -36,12 +36,14 @@ int main()
     double vM = sqrt(2 * kB * Tw / mi); // most probable speed
     double MCsigma = 3.545;             // diameter of methane
 
-    double H = 200;
+    ifstream Height("Height.dat", ios::in);
+    double H;
+    Height >> H;
     double rCut = 15;
 
     ifstream nSteps("nTimeSteps.dat", ios::in);
     int nTimeSteps; // CHANGE, use command line: grep -o 'TIMESTEP' dump_meas.lammpstrj | wc -l
-    nSteps >> nTimeSteps;    
+    nSteps >> nTimeSteps;
 
     double binWidth = 10; // binwidth of velocity
     int maxVout = vM * 4; // max output velocity
@@ -348,8 +350,7 @@ int main()
         if (leftFromTop[i] == 1)
         {
 
-
-            if (AtomCollisions[i] <=1) // single collision cases
+            if (AtomCollisions[i] <= 1) // single collision cases
             // if (AtomCollisions[i] == 1)
             {
                 // normal
@@ -436,7 +437,7 @@ int main()
         if (leftFromTop[i] == -1)
         {
 
-            if (AtomCollisions[i] <=1) // single collision cases
+            if (AtomCollisions[i] <= 1) // single collision cases
             // if (AtomCollisions[i] == 1)
             {
                 // normal
@@ -616,10 +617,6 @@ int main()
         cout << "Mean value for vNi is: " << vNi_meanF << endl;
         cout << "Mean value for vN is: " << vN_meanF << endl;
 
-
-
-
-
         // ********Tangential Momentum Accommodation Coefficients***********
 
         // TMAC (partial range), using general expression.
@@ -650,12 +647,6 @@ int main()
             beta_de += (vTxiM[i] - vTxi_meanF) * (vTxiM[i] - vTxi_meanF); // beta donominator
         }
         sigmaTx_f2 = 1 - beta_nu / beta_de;
-
-
-
-
-
-
 
         // ********Normal Momentum Accommodation Coefficients***************
 
@@ -688,10 +679,6 @@ int main()
             beta_de += (vNiM[i] - vNi_meanF) * (vNiM[i] - vNi_meanF); // beta donominator
         }
         sigmaN_f2 = 1 - beta_nu / beta_de;
-
-
-
-
 
         // ********Kinetic Energy Accommodation Coefficients (Normal component)***************
 
@@ -744,7 +731,6 @@ vector<double> linspace(double min, double max, size_t N)
     }
     return linspace;
 }
-
 
 bool sameSign(double num1, double num2)
 {

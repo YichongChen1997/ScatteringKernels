@@ -36,20 +36,17 @@ int main()
 
     //**** THINGS TO CHANGE *****
 
-    double rCut = 15; // gas-wall interaction distance
-
-    // double d = 3;    // can change this if issues with too dense fluid
-
+    double rCut = 15;       // gas-wall interaction distance
     double thickness = 15;  // thickness of the wall
     double zRigidRange = 5; // rigid bound of the wall
 
     // roughness
-    double amp = 0.0;
+    double amp = 5.0;
     double period = 25;
 
-    double H = 200;
-    double X = 800;
-    double Y = 800;
+    double X = 200;
+    double Y = 200;
+    double H = 40;
     double uCM = 1.5; // unit-cell spacing between methane molecules
 
     double atomForceSi = 8.0e-15;                       // Newtons (ensure the magnitude of velocity at decades of m/s)
@@ -62,7 +59,6 @@ int main()
     //double rho = 10; // kg/m^3 either define rho directly here or use the pressure
 
     //***************************
-
     // density to be set automatically
     if (setPressure)
     {
@@ -150,7 +146,9 @@ int main()
 
     double rIx, rIy, rIz, xP, yP, zP;
     double smallOffset = 0.2;
-    double roughSurface = 0.0;
+
+    double roughSurfaceX = 0.0;
+    double roughSurfaceY = 0.0;
 
     for (k = 0; k < nZ; k++)
     {
@@ -168,9 +166,10 @@ int main()
                     yP = rIy + unitCellSize * j + yLo + smallOffset;
                     zP = thickness - (rIz + unitCellSize * k); // just be careful of this
 
-                    roughSurface = amp * (sin(2 * PI * xP / period) + sin(2 * PI * yP / period));
+                    roughSurfaceX = amp * (sin(2 * PI * xP / period));
+                    roughSurfaceY = amp * (sin(2 * PI * yP / period));
 
-                    if (zP <= roughSurface)
+                    if ((zP <= roughSurfaceX) && (zP <= roughSurfaceY))
                     {
                         xWall.push_back(xP);
                         yWall.push_back(yP);

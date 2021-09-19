@@ -33,17 +33,17 @@ int main()
     // ***************************
     int tSkip = 500;
     double deltaT = 0.5;
+    
+    ifstream Height("Height.dat", ios::in);
+    double H;
+    Height >> H;
+    double rCut = 15;
 
     ifstream nSteps("nTimeSteps.dat", ios::in);
     int nTimeSteps; // CHANGE, use command line: grep -o 'TIMESTEP' dump_meas.lammpstrj | wc -l
     nSteps >> nTimeSteps;
 
     int skipTimeStep = 1;
-    ifstream Height("Height.dat", ios::in);
-    double H;
-    Height >> H;
-
-    double rCut = 15;
 
     double Msigma = 3.73; // diameter of one methane moleule
     // ***************************
@@ -239,7 +239,7 @@ int main()
         // Number density
         rhoN1 = nMethaneMiddle / (volume * refLength * refLength * refLength);
         rhoN2 = nMethaneMiddle2 / (volume2 * refLength * refLength * refLength);
-        
+
         tempMiddle = 0.0;
 
         // Mean velocity

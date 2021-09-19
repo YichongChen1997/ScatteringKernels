@@ -28,6 +28,9 @@ int main()
     double Tw = 423;                    // temperature of wall (Kelvin)
     double vM = sqrt(2 * kB * Tw / mi); // most probable speed
 
+    // int tSkip = 200; // no of output in dump command
+    // double deltaT = 2.0; // MD timestep
+
     ifstream Height("Height.dat", ios::in);
     double H;
     Height >> H;

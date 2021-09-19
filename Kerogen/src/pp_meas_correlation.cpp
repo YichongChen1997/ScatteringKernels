@@ -7,7 +7,6 @@
 #include <cstdlib>
 
 using namespace std;
-const float PI = 3.1415;
 
 int main()
 {
@@ -19,36 +18,34 @@ int main()
     double kB = 1.38064852e-23;
 
     double mi = 2.66389e-26; // mass of one molecule
+    double MCsigma = 3.545;  // sigma of methane - C interaction
     double refMass = 1.66054e-27;
     double refLength = 1e-10;
     double refTime = 1e-15;
     double refVelocity = refLength / refTime; // 1 Angstrom / 1 fs
     double refPressure = 101325;
-
-    //**** CHANGE **************
-
     double Tw = 423;                    // temperature of wall (Kelvin)
     double vM = sqrt(2 * kB * Tw / mi); // most probable speed
 
-    // int tSkip = 500; // no of output in dump command
-    // double deltaT = 2.0; // MD timestep
-
+    //**** CHANGE **************
+    double rCut = 15;
     ifstream Height("Height.dat", ios::in);
     double H;
     Height >> H;
-    double rCut = 15;
 
     ifstream nSteps("nTimeSteps.dat", ios::in);
-    int nTimeSteps; 
+    int nTimeSteps; // CHANGE, use command line: grep -o 'TIMESTEP' dump_meas.lammpstrj | wc -l
     nSteps >> nTimeSteps;
 
-    double binWidth = 1; // binwidth of velocity
-    int maxVout = 180;   // max output of range
+    double binWidth = 10; // binwidth of velocity
+    int maxVout = vM * 4; // max output velocity
     int nBins = ceil(maxVout / binWidth);
-
     // **************************
 
     ifstream data("dump_meas_gas.lammpstrj", ios::in);
+
+    ofstream topData("topData.txt", ios::out);
+    ofstream bottomData("bottomData.txt", ios::out);
 
     int nWallCollisions = 0;    // collect total number of collided molecules with wall
     int nStartedCollisions = 0; // collect number of collisions that have started
@@ -71,7 +68,6 @@ int main()
     // the following is collision data ("start" = when the molecule enters rCut and
     // "end" = when the molecule has left rCut). Every row is a single atomic collision.
     // Note that one molecule can hit a wall multiple times. so it can be in this list many times
-    // Yichong you have all this data you can use for analysis
 
     vector<double> tEnter;
     vector<double> xEnter;
@@ -283,204 +279,20 @@ int main()
     cout << "Number of Collisions Ended: " << vzEnd.size() << endl;
     cout << endl;
 
-    vector<double> vN, vNi;
-    vector<double> vT, vTi;
-    vector<double> vTx, vTxi;
-    vector<double> vTy, vTyi;
-    double vMagT, vMagTi;
-
-    int coTop = 0, coBottom = 0;
-
     for (i = 0; i < nWallCollisions; i++)
     {
         if (leftFromTop[i] == 1)
         {
-
-            // normal
-            vN.push_back(abs(vzEnd[i]));
-            vNi.push_back(abs(vzStart[i]));
-
-            // combined tangents
-            vMagT = vxEnd[i] * vxEnd[i] + vyEnd[i] * vyEnd[i];
-            vMagTi = vxStart[i] * vxStart[i] + vyStart[i] * vyStart[i];
-
-            if (vMagT > 0)
-            {
-                vT.push_back(sqrt(vMagT));
-            }
-            else
-            {
-                vT.push_back(0.0);
-            }
-
-            if (vMagTi > 0)
-            {
-                vTi.push_back(sqrt(vMagTi));
-            }
-            else
-            {
-                vTi.push_back(0.0);
-            }
-
-            vTx.push_back(vxEnd[i]);
-            vTxi.push_back(vxStart[i]);
-
-            vTy.push_back(vyEnd[i]);
-            vTyi.push_back(vyStart[i]);
-
-            coTop++;
+            topData << vxStart[i] << " " << vyStart[i] << " " << vzStart[i] << " "
+                    << vxEnd[i] << " " << vyEnd[i] << " " << vzEnd[i] << endl;
         }
 
         if (leftFromTop[i] == -1)
         {
-
-            // normal
-            vN.push_back(abs(vzEnd[i]));
-            vNi.push_back(abs(vzStart[i]));
-
-            // combined tangents
-            vMagT = vxEnd[i] * vxEnd[i] + vyEnd[i] * vyEnd[i];
-            vMagTi = vxStart[i] * vxStart[i] + vyStart[i] * vyStart[i];
-
-            if (vMagT > 0)
-            {
-                vT.push_back(sqrt(vMagT));
-            }
-            else
-            {
-                vT.push_back(0.0);
-            }
-
-            if (vMagTi > 0)
-            {
-                vTi.push_back(sqrt(vMagTi));
-            }
-            else
-            {
-                vTi.push_back(0.0);
-            }
-
-            vTx.push_back(vxEnd[i]);
-            vTxi.push_back(vxStart[i]);
-
-            vTy.push_back(vyEnd[i]);
-            vTyi.push_back(vyStart[i]);
-
-            coBottom++;
+            bottomData << vxStart[i] << " " << vyStart[i] << " " << vzStart[i] << " "
+                       << vxEnd[i] << " " << vyEnd[i] << " " << vzEnd[i] << endl;
         }
     }
 
-    cout << "Size of vN: " << vN.size() << endl;
-    cout << "No. of Collisions at top: " << coTop << endl;
-    cout << "No. of Collisions at bottom: " << coBottom << endl;
-
-    int nPts = vN.size();
-
-    double sum_vTx = 0.0, sum_vTxi = 0.0, ave_vTx, ave_vTxi;
-    for (int i = 0; i < nPts; ++i)
-    {
-        sum_vTxi += vTxi[i];
-        sum_vTx += vTx[i];
-    }
-    ave_vTxi = sum_vTxi / vTxi.size();
-    ave_vTx = sum_vTx / vTx.size();
-
-    cout << "The average incident velocity of tangential X components: " << ave_vTxi << endl;
-    cout << "The average reflected velocity of tangential X components: " << ave_vTx << endl;
-    cout << endl;
-
-    // Incident angle (full range)
-    {
-        vector<double> distribution(nBins, 0.0);
-        vector<double> bins(nBins, 0.0);
-        int count = 0;
-
-        for (i = 0; i < nBins; i++)
-        {
-            bins[i] = binWidth * 0.5 + binWidth * i;
-        }
-
-        for (i = 0; i < nPts; i++)
-        { 
-            if ((atan(abs(vTi[i]) / vNi[i]) >= 0 * PI / 180) && (atan(abs(vTi[i]) / vNi[i]) <= 90 * PI / 180))
-            {
-                bo = floor((atan(abs(vTi[i]) / vNi[i]) * 180 / PI) / binWidth);
-
-                if (bo >= nBins)
-                {
-                    bo = nBins - 1;
-                }
-
-                distribution[bo] += 1.0;
-                count++;
-            }
-        }
-        cout << "Number of molecules for the full range angle: " << count << endl;
-
-        vector<double> probability(nBins, 0.0);
-        double areaUnderGraph = 0.0;
-        for (i = 0; i < nBins - 1; i++)
-        {
-            areaUnderGraph += (bins[i + 1] - bins[i]) * (distribution[i] + distribution[i + 1]) * 0.5;
-        }
-
-        for (i = 0; i < nBins; i++)
-        {
-            probability[i] = distribution[i] / areaUnderGraph;
-        }
-        ofstream file("Incident_angular_full.txt");
-
-        for (i = 0; i < nBins; i++)
-        {
-            file << bins[i] << " " << distribution[i] << " " << probability[i] << endl;
-        }
-    }
-
-    // Reflected angle (full range)
-    {
-        vector<double> distribution(nBins, 0.0);
-        vector<double> bins(nBins, 0.0);
-        int count = 0;
-
-        for (i = 0; i < nBins; i++)
-        {
-            bins[i] = binWidth * 0.5 + binWidth * i;
-        }
-
-        for (i = 0; i < nPts; i++)
-        { 
-            if ((atan(abs(vTi[i]) / vNi[i]) >= 0 * PI / 180) && (atan(abs(vTi[i]) / vNi[i]) <= 90 * PI / 180))
-            {
-                bo = floor((atan(abs(vT[i]) / vN[i]) * 180 / PI) / binWidth);
-
-                if (bo >= nBins)
-                {
-                    bo = nBins - 1;
-                }
-
-                distribution[bo] += 1.0;
-                count++;
-
-            }
-        }
-
-        vector<double> probability(nBins, 0.0);
-        double areaUnderGraph = 0.0;
-        for (i = 0; i < nBins - 1; i++)
-        {
-            areaUnderGraph += (bins[i + 1] - bins[i]) * (distribution[i] + distribution[i + 1]) * 0.5;
-        }
-
-        for (i = 0; i < nBins; i++)
-        {
-            probability[i] = distribution[i] / areaUnderGraph;
-        }
-        ofstream file("Reflected_angular_full.txt");
-
-        for (i = 0; i < nBins; i++)
-        {
-            file << bins[i] << " " << distribution[i] << " " << probability[i] << endl;
-        }
-    }
     return 0;
 }

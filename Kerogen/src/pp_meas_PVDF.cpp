@@ -18,29 +18,28 @@ int main()
     double kB = 1.38064852e-23;
 
     double mi = 2.66389e-26; // mass of one molecule
+    double MCsigma = 3.545;  // sigma of methane - C interaction
     double refMass = 1.66054e-27;
     double refLength = 1e-10;
     double refTime = 1e-15;
     double refVelocity = refLength / refTime; // 1 Angstrom / 1 fs
     double refPressure = 101325;
-
-    //**** CHANGE **************
-
     double Tw = 423;                    // temperature of wall (Kelvin)
     double vM = sqrt(2 * kB * Tw / mi); // most probable speed
-    
+
+    //**** CHANGE **************
     ifstream Height("Height.dat", ios::in);
     double H;
     Height >> H;
     double rCut = 15;
-    double rCut = 15;
 
-    int nTimeSteps = 2000; // CHANGE, use command line: grep -o 'TIMESTEP' dump_meas_gas.lammpstrj | wc -l
+    ifstream nSteps("nTimeSteps.dat", ios::in);
+    int nTimeSteps; // CHANGE, use command line: grep -o 'TIMESTEP' dump_meas.lammpstrj | wc -l
+    nSteps >> nTimeSteps;
 
     double binWidth = 10; // binwidth of velocity
     int maxVout = vM * 4; // max output velocity
     int nBins = ceil(maxVout / binWidth);
-
     // **************************
 
     ifstream data("dump_meas_gas.lammpstrj", ios::in);
@@ -158,7 +157,7 @@ int main()
 
         for (n = 0; n < nAtoms; n++)
         {
-            data >> id >> typ >> x >> y >> z >> vx >> vy >> vz >> KE >> PE >> tau1 >> tau2 >> tau3;
+            data >> id >> typ >> x >> y >> z >> vx >> vy >> vz >> tau1 >> tau2 >> tau3;
 
             if (typ == 1) // methane
             {
@@ -282,7 +281,6 @@ int main()
     vector<double> vT, vTi;
     vector<double> vTx, vTxi;
     vector<double> vTy, vTyi;
-    vector<double> vMag, vMagi;
     double vMagT, vMagTi;
 
     int coTop = 0, coBottom = 0;
@@ -297,8 +295,8 @@ int main()
             vNi.push_back(abs(vzStart[i]));
 
             // combined tangents
-            vMagT = sqrt(vxEnd[i] * vxEnd[i] + vyEnd[i] * vyEnd[i]);
-            vMagTi = sqrt(vxStart[i] * vxStart[i] + vyStart[i] * vyStart[i]);
+            vMagT = vxEnd[i] * vxEnd[i] + vyEnd[i] * vyEnd[i];
+            vMagTi = vxStart[i] * vxStart[i] + vyStart[i] * vyStart[i];
 
             if (vMagT > 0)
             {
@@ -323,10 +321,6 @@ int main()
 
             vTy.push_back(vyEnd[i]);
             vTyi.push_back(vyStart[i]);
-
-            // total velocity
-            vMag.push_back(sqrt(abs(vzEnd[i]) * abs(vzEnd[i]) + vMagT * vMagT));
-            vMagi.push_back(sqrt(abs(vzStart[i]) * abs(vzStart[i]) + vMagTi * vMagTi));            
 
             coTop++;
         }
@@ -339,8 +333,8 @@ int main()
             vNi.push_back(abs(vzStart[i]));
 
             // combined tangents
-            vMagT = sqrt(vxEnd[i] * vxEnd[i] + vyEnd[i] * vyEnd[i]);
-            vMagTi = sqrt(vxStart[i] * vxStart[i] + vyStart[i] * vyStart[i]);
+            vMagT = vxEnd[i] * vxEnd[i] + vyEnd[i] * vyEnd[i];
+            vMagTi = vxStart[i] * vxStart[i] + vyStart[i] * vyStart[i];
 
             if (vMagT > 0)
             {
@@ -365,10 +359,6 @@ int main()
 
             vTy.push_back(vyEnd[i]);
             vTyi.push_back(vyStart[i]);
-
-            // total velocity
-            vMag.push_back(sqrt(abs(vzEnd[i]) * abs(vzEnd[i]) + vMagT * vMagT));
-            vMagi.push_back(sqrt(abs(vzStart[i]) * abs(vzStart[i]) + vMagTi * vMagTi));
 
             coBottom++;
         }
@@ -393,6 +383,54 @@ int main()
     cout << "The average reflected velocity of tangential X components: " << ave_vTx << endl;
     cout << endl;
 
+    // Normal 0.1
+    {
+        // Velocity distribution for selected range (Normal)
+        vector<double> distribution(nBins, 0.0);
+        vector<double> bins(nBins, 0.0);
+        int count = 0;
+
+        for (i = 0; i < nBins; i++)
+        {
+            bins[i] = binWidth * 0.5 + binWidth * i;
+        }
+
+        for (i = 0; i < nPts; i++)
+        { // Modify here for different incident velocity
+            if ((vNi[i] > 0) && (vNi[i] <= vM * 0.2))
+            {
+                bo = floor(vN[i] / binWidth);
+
+                if (bo >= nBins)
+                {
+                    bo = nBins - 1;
+                }
+
+                distribution[bo] += 1.0;
+                count++;
+            }
+        }
+        cout << "Number of molecules among 0-0.2 are: " << count << endl;
+
+        vector<double> probability(nBins, 0.0);
+        double areaUnderGraph = 0.0;
+        for (i = 0; i < nBins - 1; i++)
+        {
+            areaUnderGraph += (bins[i + 1] - bins[i]) * (distribution[i] + distribution[i + 1]) * 0.5;
+        }
+
+        for (i = 0; i < nBins; i++)
+        {
+            probability[i] = distribution[i] / areaUnderGraph;
+        }
+        ofstream file("reflected_normal_01.txt");
+
+        for (i = 0; i < nBins; i++)
+        {
+            file << bins[i] << " " << distribution[i] << " " << probability[i] << endl;
+        }
+    }
+
     // Normal 0.5
     {
         // Velocity distribution for selected range (Normal)
@@ -406,9 +444,8 @@ int main()
         }
 
         for (i = 0; i < nPts; i++)
-        { 
-            // Modify here for different incident velocity magnitude
-            if ((vMagi[i] > 0) && (vMagi[i] <= vM * 0.5))
+        { // Modify here for different incident velocity
+            if ((vNi[i] > vM * 0.4) && (vNi[i] <= vM * 0.6))
             {
                 bo = floor(vN[i] / binWidth);
 
@@ -421,7 +458,7 @@ int main()
                 count++;
             }
         }
-        cout << "Number of molecules with incident velocity magnitude smaller than 0.5: " << count << endl;
+        cout << "Number of molecules among 0.4-0.6 are: " << count << endl;
 
         vector<double> probability(nBins, 0.0);
         double areaUnderGraph = 0.0;
@@ -434,7 +471,7 @@ int main()
         {
             probability[i] = distribution[i] / areaUnderGraph;
         }
-        ofstream file("vMag_05_N.txt");
+        ofstream file("reflected_normal_05.txt");
 
         for (i = 0; i < nBins; i++)
         {
@@ -442,7 +479,7 @@ int main()
         }
     }
 
-    // Normal 1.0
+    // Normal 0.9
     {
         // Velocity distribution for selected range (Normal)
         vector<double> distribution(nBins, 0.0);
@@ -455,9 +492,8 @@ int main()
         }
 
         for (i = 0; i < nPts; i++)
-        { 
-            // Modify here for different incident velocity magnitude
-            if ((vMagi[i] > 0) && (vMagi[i] <= vM * 1.0))
+        { // Modify here for different incident velocity
+            if ((vNi[i] > vM * 0.8) && (vNi[i] <= vM))
             {
                 bo = floor(vN[i] / binWidth);
 
@@ -468,9 +504,10 @@ int main()
 
                 distribution[bo] += 1.0;
                 count++;
+
             }
         }
-        cout << "Number of molecules with incident velocity magnitude smaller than 1.0: " << count << endl;
+        cout << "Number of molecules among 0.8-1.0 are: " << count << endl;
 
         vector<double> probability(nBins, 0.0);
         double areaUnderGraph = 0.0;
@@ -483,13 +520,186 @@ int main()
         {
             probability[i] = distribution[i] / areaUnderGraph;
         }
-        ofstream file("vMag_10_N.txt");
+        ofstream file("reflected_normal_09.txt");
 
         for (i = 0; i < nBins; i++)
         {
             file << bins[i] << " " << distribution[i] << " " << probability[i] << endl;
         }
-    }    
+    }
+
+    // Normal 1.4
+    {
+        // Velocity distribution for selected range (Normal)
+        vector<double> distribution(nBins, 0.0);
+        vector<double> bins(nBins, 0.0);
+        int count = 0;
+
+        for (i = 0; i < nBins; i++)
+        {
+            bins[i] = binWidth * 0.5 + binWidth * i;
+        }
+
+        for (i = 0; i < nPts; i++)
+        { // Modify here for different incident velocity
+            if ((vNi[i] > vM * 1.3) && (vNi[i] <= vM * 1.5))
+            {
+                bo = floor(vN[i] / binWidth);
+
+                if (bo >= nBins)
+                {
+                    bo = nBins - 1;
+                }
+
+                distribution[bo] += 1.0;
+                count++;
+
+            }
+        }
+        cout << "Number of molecules among 1.3-1.5 are: " << count << endl;
+
+        vector<double> probability(nBins, 0.0);
+        double areaUnderGraph = 0.0;
+        for (i = 0; i < nBins - 1; i++)
+        {
+            areaUnderGraph += (bins[i + 1] - bins[i]) * (distribution[i] + distribution[i + 1]) * 0.5;
+        }
+
+        for (i = 0; i < nBins; i++)
+        {
+            probability[i] = distribution[i] / areaUnderGraph;
+        }
+        ofstream file("reflected_normal_14.txt");
+
+        for (i = 0; i < nBins; i++)
+        {
+            file << bins[i] << " " << distribution[i] << " " << probability[i] << endl;
+        }
+    }
+
+    // Normal 1.9
+    {
+        // Velocity distribution for selected range (Normal)
+        vector<double> distribution(nBins, 0.0);
+        vector<double> bins(nBins, 0.0);
+        int count = 0;
+
+        for (i = 0; i < nBins; i++)
+        {
+            bins[i] = binWidth * 0.5 + binWidth * i;
+        }
+
+        for (i = 0; i < nPts; i++)
+        { // Modify here for different incident velocity
+            if ((vNi[i] > vM * 1.8) && (vNi[i] <= vM * 2.0))
+            {
+                bo = floor(vN[i] / binWidth);
+
+                if (bo >= nBins)
+                {
+                    bo = nBins - 1;
+                }
+
+                distribution[bo] += 1.0;
+                count++;
+            }
+        }
+        cout << "Number of molecules among 1.8-2.0 are: " << count << endl;
+
+        vector<double> probability(nBins, 0.0);
+        double areaUnderGraph = 0.0;
+        for (i = 0; i < nBins - 1; i++)
+        {
+            areaUnderGraph += (bins[i + 1] - bins[i]) * (distribution[i] + distribution[i + 1]) * 0.5;
+        }
+
+        for (i = 0; i < nBins; i++)
+        {
+            probability[i] = distribution[i] / areaUnderGraph;
+        }
+        ofstream file("reflected_normal_19.txt");
+
+        for (i = 0; i < nBins; i++)
+        {
+            file << bins[i] << " " << distribution[i] << " " << probability[i] << endl;
+        }
+    }
+
+    // Tx 0.1
+    {
+        // velocity distribution for selected range
+        vector<double> distributionA(nBins, 0.0);
+        vector<double> distributionB(nBins, 0.0);
+        vector<double> binsA(nBins, 0.0);
+        vector<double> binsB(nBins, 0.0);
+        int count = 0;
+
+        for (i = 0; i < nBins; i++)
+        {
+            binsA[i] = binWidth * 0.5 + binWidth * i;
+            binsB[i] = -binsA[i];
+        }
+
+        for (i = 0; i < nPts; i++)
+        {
+            if ((vTxi[i] > 0) && (vTxi[i] <= vM * 0.2))
+            {
+                if (vTx[i] >= 0)
+                {
+                    bo = floor(vTx[i] / binWidth);
+
+                    if (bo >= nBins)
+                    {
+                        bo = nBins - 1;
+                    }
+
+                    distributionA[bo] += 1.0;
+                }
+                else
+                {
+                    bo = floor(abs(vTx[i]) / binWidth);
+
+                    if (bo >= nBins)
+                    {
+                        bo = nBins - 1;
+                    }
+
+                    distributionB[bo] += 1.0;
+                }
+                count++;
+            }
+        }
+        cout << "Number of molecules among 0-0.2 are: " << count << endl;
+        vector<double> probabilityA(nBins, 0.0);
+        vector<double> probabilityB(nBins, 0.0);
+
+        // scale with area
+        double areaUnderGraph = 0.0;
+
+        for (i = 0; i < nBins - 1; i++)
+        {
+            areaUnderGraph += (binsA[i + 1] - binsA[i]) * (distributionA[i] + distributionA[i + 1]) * 0.5;
+            areaUnderGraph += abs(binsB[i + 1] - binsB[i]) * (distributionB[i] + distributionB[i + 1]) * 0.5;
+        }
+
+        for (i = 0; i < nBins; i++)
+        {
+            probabilityA[i] = distributionA[i] / areaUnderGraph;
+            probabilityB[i] = distributionB[i] / areaUnderGraph;
+        }
+
+        ofstream file("reflected_Tx_01.txt");
+
+        for (i = 0; i < nBins; i++)
+        {
+            file << binsB[nBins - i - 1] << " " << distributionB[nBins - i - 1] << " " << probabilityB[nBins - i - 1] << endl;
+        }
+
+        for (i = 0; i < nBins; i++)
+        {
+            file << binsA[i] << " " << distributionA[i] << " " << probabilityA[i] << endl;
+        }
+    }
 
     // Tx 0.5
     {
@@ -506,9 +716,10 @@ int main()
             binsB[i] = -binsA[i];
         }
 
+
         for (i = 0; i < nPts; i++)
         {
-            if ((vMagi[i] > 0) && (vMagi[i] <= vM * 0.5))
+            if ((vTxi[i] > vM * 0.4) && (vTxi[i] <= vM * 0.6))
             {
                 if (vTx[i] >= 0)
                 {
@@ -535,7 +746,7 @@ int main()
                 count++;
             }
         }
-        cout << "Number of molecules with incident velocity magnitude smaller than 0.5: " << count << endl;
+        cout << "Number of molecules among 0.4-0.6 are: " << count << endl;
         vector<double> probabilityA(nBins, 0.0);
         vector<double> probabilityB(nBins, 0.0);
 
@@ -554,7 +765,7 @@ int main()
             probabilityB[i] = distributionB[i] / areaUnderGraph;
         }
 
-        ofstream file("vMag_05_Tx.txt");
+        ofstream file("reflected_Tx_05.txt");
 
         for (i = 0; i < nBins; i++)
         {
@@ -567,7 +778,7 @@ int main()
         }
     }
 
-    // Tx 1.0
+    // Tx 0.9
     {
         // velocity distribution for selected range
         vector<double> distributionA(nBins, 0.0);
@@ -584,7 +795,7 @@ int main()
 
         for (i = 0; i < nPts; i++)
         {
-            if ((vMagi[i] > 0) && (vMagi[i] <= vM * 1.0))
+            if ((vTxi[i] > vM * 0.8) && (vTxi[i] <= vM))
             {
                 if (vTx[i] >= 0)
                 {
@@ -611,7 +822,7 @@ int main()
                 count++;
             }
         }
-        cout << "Number of molecules with incident velocity magnitude smaller than 1.0: " << count << endl;
+        cout << "Number of molecules among 0.8-1.0 are: " << count << endl;
         vector<double> probabilityA(nBins, 0.0);
         vector<double> probabilityB(nBins, 0.0);
 
@@ -630,7 +841,7 @@ int main()
             probabilityB[i] = distributionB[i] / areaUnderGraph;
         }
 
-        ofstream file("vMag_10_Tx.txt");
+        ofstream file("reflected_Tx_09.txt");
 
         for (i = 0; i < nBins; i++)
         {
@@ -641,8 +852,160 @@ int main()
         {
             file << binsA[i] << " " << distributionA[i] << " " << probabilityA[i] << endl;
         }
-    }    
+    }
 
+    // Tx 1.4
+    {
+        // velocity distribution for selected range
+        vector<double> distributionA(nBins, 0.0);
+        vector<double> distributionB(nBins, 0.0);
+        vector<double> binsA(nBins, 0.0);
+        vector<double> binsB(nBins, 0.0);
+        int count = 0;
+
+        for (i = 0; i < nBins; i++)
+        {
+            binsA[i] = binWidth * 0.5 + binWidth * i;
+            binsB[i] = -binsA[i];
+        }
+
+
+        for (i = 0; i < nPts; i++)
+        {
+            if ((vTxi[i] > vM * 1.3) && (vTxi[i] <= vM * 1.5))
+            {
+                if (vTx[i] >= 0)
+                {
+                    bo = floor(vTx[i] / binWidth);
+
+                    if (bo >= nBins)
+                    {
+                        bo = nBins - 1;
+                    }
+
+                    distributionA[bo] += 1.0;
+                }
+                else
+                {
+                    bo = floor(abs(vTx[i]) / binWidth);
+
+                    if (bo >= nBins)
+                    {
+                        bo = nBins - 1;
+                    }
+
+                    distributionB[bo] += 1.0;
+                }
+                count++;
+            }
+        }
+        cout << "Number of molecules among 1.3-1.5 are: " << count << endl;
+        vector<double> probabilityA(nBins, 0.0);
+        vector<double> probabilityB(nBins, 0.0);
+
+        // scale with area
+        double areaUnderGraph = 0.0;
+
+        for (i = 0; i < nBins - 1; i++)
+        {
+            areaUnderGraph += (binsA[i + 1] - binsA[i]) * (distributionA[i] + distributionA[i + 1]) * 0.5;
+            areaUnderGraph += abs(binsB[i + 1] - binsB[i]) * (distributionB[i] + distributionB[i + 1]) * 0.5;
+        }
+
+        for (i = 0; i < nBins; i++)
+        {
+            probabilityA[i] = distributionA[i] / areaUnderGraph;
+            probabilityB[i] = distributionB[i] / areaUnderGraph;
+        }
+
+        ofstream file("reflected_Tx_14.txt");
+
+        for (i = 0; i < nBins; i++)
+        {
+            file << binsB[nBins - i - 1] << " " << distributionB[nBins - i - 1] << " " << probabilityB[nBins - i - 1] << endl;
+        }
+
+        for (i = 0; i < nBins; i++)
+        {
+            file << binsA[i] << " " << distributionA[i] << " " << probabilityA[i] << endl;
+        }
+    }
+
+    // Tx 1.9
+    {
+        // velocity distribution for selected range
+        vector<double> distributionA(nBins, 0.0);
+        vector<double> distributionB(nBins, 0.0);
+        vector<double> binsA(nBins, 0.0);
+        vector<double> binsB(nBins, 0.0);
+        int count = 0;
+
+        for (i = 0; i < nBins; i++)
+        {
+            binsA[i] = binWidth * 0.5 + binWidth * i;
+            binsB[i] = -binsA[i];
+        }
+
+        for (i = 0; i < nPts; i++)
+        {
+            if ((vTxi[i] > vM * 1.8) && (vTxi[i] <= vM * 2.0))
+            {
+                if (vTx[i] >= 0)
+                {
+                    bo = floor(vTx[i] / binWidth);
+
+                    if (bo >= nBins)
+                    {
+                        bo = nBins - 1;
+                    }
+
+                    distributionA[bo] += 1.0;
+                }
+                else
+                {
+                    bo = floor(abs(vTx[i]) / binWidth);
+
+                    if (bo >= nBins)
+                    {
+                        bo = nBins - 1;
+                    }
+
+                    distributionB[bo] += 1.0;
+                }
+                count++;
+            }
+        }
+        cout << "Number of molecules among 1.8-2.0 are: " << count << endl;
+        vector<double> probabilityA(nBins, 0.0);
+        vector<double> probabilityB(nBins, 0.0);
+
+        // scale with area
+        double areaUnderGraph = 0.0;
+
+        for (i = 0; i < nBins - 1; i++)
+        {
+            areaUnderGraph += (binsA[i + 1] - binsA[i]) * (distributionA[i] + distributionA[i + 1]) * 0.5;
+            areaUnderGraph += abs(binsB[i + 1] - binsB[i]) * (distributionB[i] + distributionB[i + 1]) * 0.5;
+        }
+
+        for (i = 0; i < nBins; i++)
+        {
+            probabilityA[i] = distributionA[i] / areaUnderGraph;
+            probabilityB[i] = distributionB[i] / areaUnderGraph;
+        }
+
+        ofstream file("reflected_Tx_19.txt");
+
+        for (i = 0; i < nBins; i++)
+        {
+            file << binsB[nBins - i - 1] << " " << distributionB[nBins - i - 1] << " " << probabilityB[nBins - i - 1] << endl;
+        }
+
+        for (i = 0; i < nBins; i++)
+        {
+            file << binsA[i] << " " << distributionA[i] << " " << probabilityA[i] << endl;
+        }
+    }
 
     return 0;
 }

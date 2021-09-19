@@ -36,10 +36,10 @@ int main()
     double vM = sqrt(2 * kB * Tw / mi); // most probable speed
     double MCsigma = 3.545;             // diameter of methane
 
-    double rCut = 15;
     ifstream Height("Height.dat", ios::in);
     double H;
     Height >> H;
+    double rCut = 15;
 
     ifstream nSteps("nTimeSteps.dat", ios::in);
     int nTimeSteps; // CHANGE, use command line: grep -o 'TIMESTEP' dump_meas.lammpstrj | wc -l

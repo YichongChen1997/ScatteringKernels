@@ -25,24 +25,23 @@ int main()
     double refPressure = 101325;
 
     //**** CHANGE **************
-
     double Tw = 423;                    // temperature of wall (Kelvin)
     double vM = sqrt(2 * kB * Tw / mi); // most probable speed
-    
+
     ifstream Height("Height.dat", ios::in);
     double H;
     Height >> H;
     double rCut = 15;
-    double rCut = 15;
 
-    int nTimeSteps = 2000; // CHANGE, use command line: grep -o 'TIMESTEP' dump_meas_gas.lammpstrj | wc -l
+    ifstream nSteps("nTimeSteps.dat", ios::in);
+    int nTimeSteps; // CHANGE, use command line: grep -o 'TIMESTEP' dump_meas.lammpstrj | wc -l
+    nSteps >> nTimeSteps;
 
     double binWidth = 10; // binwidth of velocity
     int maxVout = vM * 4; // max output velocity
     int nBins = ceil(maxVout / binWidth);
 
     // **************************
-
     ifstream data("dump_meas_gas.lammpstrj", ios::in);
 
     int nWallCollisions = 0;    // collect total number of collided molecules with wall
@@ -65,8 +64,7 @@ int main()
 
     // the following is collision data ("start" = when the molecule enters rCut and
     // "end" = when the molecule has left rCut). Every row is a single atomic collision.
-    // Note that one molecule can hit a wall multiple times. so it can be in this list many times
-    // Yichong you have all this data you can use for analysis
+    // Note that one molecule can hit a wall multiple times. so it can be in this list many times.
 
     vector<double> tEnter;
     vector<double> xEnter;
@@ -158,7 +156,7 @@ int main()
 
         for (n = 0; n < nAtoms; n++)
         {
-            data >> id >> typ >> x >> y >> z >> vx >> vy >> vz >> KE >> PE >> tau1 >> tau2 >> tau3;
+            data >> id >> typ >> x >> y >> z >> vx >> vy >> vz >> tau1 >> tau2 >> tau3;
 
             if (typ == 1) // methane
             {
@@ -297,8 +295,12 @@ int main()
             vNi.push_back(abs(vzStart[i]));
 
             // combined tangents
-            vMagT = sqrt(vxEnd[i] * vxEnd[i] + vyEnd[i] * vyEnd[i]);
-            vMagTi = sqrt(vxStart[i] * vxStart[i] + vyStart[i] * vyStart[i]);
+            vMagT = vxEnd[i] * vxEnd[i] + vyEnd[i] * vyEnd[i];
+            vMagTi = vxStart[i] * vxStart[i] + vyStart[i] * vyStart[i];
+
+            // total velocity
+            vMag.push_back(sqrt(abs(vzEnd[i]) * abs(vzEnd[i]) + vMagT * vMagT));
+            vMagi.push_back(sqrt(abs(vzStart[i]) * abs(vzStart[i]) + vMagTi * vMagTi));
 
             if (vMagT > 0)
             {
@@ -323,10 +325,6 @@ int main()
 
             vTy.push_back(vyEnd[i]);
             vTyi.push_back(vyStart[i]);
-
-            // total velocity
-            vMag.push_back(sqrt(abs(vzEnd[i]) * abs(vzEnd[i]) + vMagT * vMagT));
-            vMagi.push_back(sqrt(abs(vzStart[i]) * abs(vzStart[i]) + vMagTi * vMagTi));            
 
             coTop++;
         }
@@ -339,8 +337,12 @@ int main()
             vNi.push_back(abs(vzStart[i]));
 
             // combined tangents
-            vMagT = sqrt(vxEnd[i] * vxEnd[i] + vyEnd[i] * vyEnd[i]);
-            vMagTi = sqrt(vxStart[i] * vxStart[i] + vyStart[i] * vyStart[i]);
+            vMagT = vxEnd[i] * vxEnd[i] + vyEnd[i] * vyEnd[i];
+            vMagTi = vxStart[i] * vxStart[i] + vyStart[i] * vyStart[i];
+
+            // total velocity
+            vMag.push_back(sqrt(abs(vzEnd[i]) * abs(vzEnd[i]) + vMagT * vMagT));
+            vMagi.push_back(sqrt(abs(vzStart[i]) * abs(vzStart[i]) + vMagTi * vMagTi));
 
             if (vMagT > 0)
             {
@@ -365,10 +367,6 @@ int main()
 
             vTy.push_back(vyEnd[i]);
             vTyi.push_back(vyStart[i]);
-
-            // total velocity
-            vMag.push_back(sqrt(abs(vzEnd[i]) * abs(vzEnd[i]) + vMagT * vMagT));
-            vMagi.push_back(sqrt(abs(vzStart[i]) * abs(vzStart[i]) + vMagTi * vMagTi));
 
             coBottom++;
         }
@@ -393,12 +391,12 @@ int main()
     cout << "The average reflected velocity of tangential X components: " << ave_vTx << endl;
     cout << endl;
 
-    // Normal 0.5
+    // ************************ incident normal component *******************************
     {
-        // Velocity distribution for selected range (Normal)
+        // now let's output some histogram
+        double vMax = 0.0;
         vector<double> distribution(nBins, 0.0);
         vector<double> bins(nBins, 0.0);
-        int count = 0;
 
         for (i = 0; i < nBins; i++)
         {
@@ -406,11 +404,10 @@ int main()
         }
 
         for (i = 0; i < nPts; i++)
-        { 
-            // Modify here for different incident velocity magnitude
-            if ((vMagi[i] > 0) && (vMagi[i] <= vM * 0.5))
+        {
+            if (vNi[i] < maxVout)
             {
-                bo = floor(vN[i] / binWidth);
+                bo = floor(vNi[i] / binWidth);
 
                 if (bo >= nBins)
                 {
@@ -418,13 +415,27 @@ int main()
                 }
 
                 distribution[bo] += 1.0;
-                count++;
+            }
+            else
+            {
+                cout << "Warning: value out of bounds for distribution, set distribution larger "
+                     << "Value of measure velocity = " << vNi[i]
+                     << endl;
+            }
+
+            if (vNi[i] > vMax)
+            {
+                vMax = vNi[i];
             }
         }
-        cout << "Number of molecules with incident velocity magnitude smaller than 0.5: " << count << endl;
+
+        cout << "Maximum vNi value = " << vMax << endl;
 
         vector<double> probability(nBins, 0.0);
+
+        // scale with area
         double areaUnderGraph = 0.0;
+
         for (i = 0; i < nBins - 1; i++)
         {
             areaUnderGraph += (bins[i + 1] - bins[i]) * (distribution[i] + distribution[i + 1]) * 0.5;
@@ -434,20 +445,22 @@ int main()
         {
             probability[i] = distribution[i] / areaUnderGraph;
         }
-        ofstream file("vMag_05_N.txt");
+
+        ofstream file("incident_velocity_normal.txt");
 
         for (i = 0; i < nBins; i++)
         {
             file << bins[i] << " " << distribution[i] << " " << probability[i] << endl;
         }
     }
+    // **********************************************************************************
 
-    // Normal 1.0
+    // ************************ reflected normal component ******************************
     {
-        // Velocity distribution for selected range (Normal)
+        // now let's output some histogram
+        double vMax = 0.0;
         vector<double> distribution(nBins, 0.0);
         vector<double> bins(nBins, 0.0);
-        int count = 0;
 
         for (i = 0; i < nBins; i++)
         {
@@ -455,9 +468,9 @@ int main()
         }
 
         for (i = 0; i < nPts; i++)
-        { 
-            // Modify here for different incident velocity magnitude
-            if ((vMagi[i] > 0) && (vMagi[i] <= vM * 1.0))
+        {
+
+            if (vN[i] < maxVout)
             {
                 bo = floor(vN[i] / binWidth);
 
@@ -467,13 +480,27 @@ int main()
                 }
 
                 distribution[bo] += 1.0;
-                count++;
+            }
+            else
+            {
+                cout << "Warning: value out of bounds of distribution, set distribution larger "
+                     << "Value of measured velocity = " << vN[i]
+                     << endl;
+            }
+
+            if (vN[i] > vMax)
+            {
+                vMax = vN[i];
             }
         }
-        cout << "Number of molecules with incident velocity magnitude smaller than 1.0: " << count << endl;
+
+        cout << "Maximum vN value = " << vMax << endl;
 
         vector<double> probability(nBins, 0.0);
+
+        // scale with area
         double areaUnderGraph = 0.0;
+
         for (i = 0; i < nBins - 1; i++)
         {
             areaUnderGraph += (bins[i + 1] - bins[i]) * (distribution[i] + distribution[i + 1]) * 0.5;
@@ -483,22 +510,154 @@ int main()
         {
             probability[i] = distribution[i] / areaUnderGraph;
         }
-        ofstream file("vMag_10_N.txt");
+
+        ofstream file("reflected_velocity_normal.txt");
 
         for (i = 0; i < nBins; i++)
         {
             file << bins[i] << " " << distribution[i] << " " << probability[i] << endl;
         }
-    }    
+    }
+    // **********************************************************************************
 
-    // Tx 0.5
+    //************************* incident tangential combined ****************************
     {
-        // velocity distribution for selected range
+        // now let's output some histogram
+        double vMax = 0.0;
+        vector<double> distribution(nBins, 0.0);
+        vector<double> bins(nBins, 0.0);
+
+        for (i = 0; i < nBins; i++)
+        {
+            bins[i] = binWidth * 0.5 + binWidth * i;
+        }
+
+        for (i = 0; i < nPts; i++)
+        {
+            if (vTi[i] < maxVout)
+            {
+                bo = floor(vTi[i] / binWidth);
+
+                if (bo >= nBins)
+                {
+                    bo = nBins - 1;
+                }
+
+                distribution[bo] += 1.0;
+            }
+            else
+            {
+                cout << "Warning: value out of bounds of distribution, set distribution larger "
+                     << "Value of measured velocity = " << vTi[i]
+                     << endl;
+            }
+
+            if (vTi[i] > vMax)
+            {
+                vMax = vTi[i];
+            }
+        }
+
+        cout << "Maximum vTi value = " << vMax << endl;
+
+        vector<double> probability(nBins, 0.0);
+
+        // scale with area
+        double areaUnderGraph = 0.0;
+
+        for (i = 0; i < nBins - 1; i++)
+        {
+            areaUnderGraph += (bins[i + 1] - bins[i]) * (distribution[i] + distribution[i + 1]) * 0.5;
+        }
+
+        for (i = 0; i < nBins; i++)
+        {
+            probability[i] = distribution[i] / areaUnderGraph;
+        }
+
+        ofstream file("incident_velocity_tangential.txt");
+
+        for (i = 0; i < nBins; i++)
+        {
+            file << bins[i] << " " << distribution[i] << " " << probability[i] << endl;
+        }
+    }
+    //***********************************************************************************
+
+    // ************************ reflected tangential combined ***************************
+    {
+        // now let's output some histogram
+        double vMax = 0.0;
+        vector<double> distribution(nBins, 0.0);
+        vector<double> bins(nBins, 0.0);
+
+        for (i = 0; i < nBins; i++)
+        {
+            bins[i] = binWidth * 0.5 + binWidth * i;
+        }
+
+        for (i = 0; i < nPts; i++)
+        {
+            if (vT[i] < maxVout)
+            {
+                bo = floor(vT[i] / binWidth);
+
+                if (bo >= nBins)
+                {
+                    bo = nBins - 1;
+                }
+
+                distribution[bo] += 1.0;
+            }
+            else
+            {
+                cout << "Warning: value out of bounds of distribution, set distribution larger "
+                     << "Value of measured velocity = " << vT[i]
+                     << endl;
+            }
+
+            if (vT[i] > vMax)
+            {
+                vMax = vT[i];
+            }
+        }
+
+        cout << "Maximum vT value = " << vMax << endl;
+
+        vector<double> probability(nBins, 0.0);
+
+        // scale with area
+        double areaUnderGraph = 0.0;
+
+        for (i = 0; i < nBins - 1; i++)
+        {
+            areaUnderGraph += (bins[i + 1] - bins[i]) * (distribution[i] + distribution[i + 1]) * 0.5;
+        }
+
+        for (i = 0; i < nBins; i++)
+        {
+            probability[i] = distribution[i] / areaUnderGraph;
+        }
+
+        ofstream file("reflected_velocity_tangential.txt");
+
+        for (i = 0; i < nBins; i++)
+        {
+            file << bins[i] << " " << distribution[i] << " " << probability[i] << endl;
+        }
+    }
+    //***********************************************************************************
+
+    //************************* incident tangential X ***********************************
+    {
+        // now let's output some histogram
+        double vMax = 0.0;
+        double vMin = 0.0;
+
         vector<double> distributionA(nBins, 0.0);
         vector<double> distributionB(nBins, 0.0);
         vector<double> binsA(nBins, 0.0);
         vector<double> binsB(nBins, 0.0);
-        int count = 0;
 
         for (i = 0; i < nBins; i++)
         {
@@ -508,7 +667,104 @@ int main()
 
         for (i = 0; i < nPts; i++)
         {
-            if ((vMagi[i] > 0) && (vMagi[i] <= vM * 0.5))
+            if (abs(vTxi[i]) < maxVout)
+            {
+                if (vTxi[i] >= 0)
+                {
+                    bo = floor(vTxi[i] / binWidth);
+
+                    if (bo >= nBins)
+                    {
+                        bo = nBins - 1;
+                    }
+
+                    distributionA[bo] += 1.0;
+                }
+                else
+                {
+                    bo = floor(abs(vTxi[i]) / binWidth);
+
+                    if (bo >= nBins)
+                    {
+                        bo = nBins - 1;
+                    }
+
+                    distributionB[bo] += 1.0;
+                }
+            }
+            else
+            {
+                cout << "Warning: value out of bounds of distribution, set distribution larger "
+                     << "Value of measured velocity = " << vTxi[i]
+                     << endl;
+            }
+
+            if (vTxi[i] > vMax)
+            {
+                vMax = vTxi[i];
+            }
+
+            if (vTxi[i] < vMin)
+            {
+                vMin = vTxi[i];
+            }
+        }
+
+        cout << "Maximum vTxi value = " << vMax << endl;
+        cout << "Minimum vTxi value = " << vMin << endl;
+
+        vector<double> probabilityA(nBins, 0.0);
+        vector<double> probabilityB(nBins, 0.0);
+
+        // scale with area
+        double areaUnderGraph = 0.0;
+
+        for (i = 0; i < nBins - 1; i++)
+        {
+            areaUnderGraph += (binsA[i + 1] - binsA[i]) * (distributionA[i] + distributionA[i + 1]) * 0.5;
+            areaUnderGraph += abs(binsB[i + 1] - binsB[i]) * (distributionB[i] + distributionB[i + 1]) * 0.5;
+        }
+
+        for (i = 0; i < nBins; i++)
+        {
+            probabilityA[i] = distributionA[i] / areaUnderGraph;
+            probabilityB[i] = distributionB[i] / areaUnderGraph;
+        }
+
+        ofstream file("incident_velocity_tangential_x.txt");
+
+        for (i = 0; i < nBins; i++)
+        {
+            file << binsB[nBins - i - 1] << " " << distributionB[nBins - i - 1] << " " << probabilityB[nBins - i - 1] << endl;
+        }
+
+        for (i = 0; i < nBins; i++)
+        {
+            file << binsA[i] << " " << distributionA[i] << " " << probabilityA[i] << endl;
+        }
+    }
+    //***********************************************************************************
+
+    //************************* reflected tangential X **********************************
+    {
+        // now let's output some histogram
+        double vMax = 0.0;
+        double vMin = 0.0;
+
+        vector<double> distributionA(nBins, 0.0);
+        vector<double> distributionB(nBins, 0.0);
+        vector<double> binsA(nBins, 0.0);
+        vector<double> binsB(nBins, 0.0);
+
+        for (i = 0; i < nBins; i++)
+        {
+            binsA[i] = binWidth * 0.5 + binWidth * i;
+            binsB[i] = -binsA[i];
+        }
+
+        for (i = 0; i < nPts; i++)
+        {
+            if (abs(vTx[i]) < maxVout)
             {
                 if (vTx[i] >= 0)
                 {
@@ -532,10 +788,28 @@ int main()
 
                     distributionB[bo] += 1.0;
                 }
-                count++;
+            }
+            else
+            {
+                cout << "Warning: value out of bounds of distribution, set distribution larger "
+                     << "Value of measured velocity = " << vTx[i]
+                     << endl;
+            }
+
+            if (vTx[i] > vMax)
+            {
+                vMax = vTx[i];
+            }
+
+            if (vTx[i] < vMin)
+            {
+                vMin = vTx[i];
             }
         }
-        cout << "Number of molecules with incident velocity magnitude smaller than 0.5: " << count << endl;
+
+        cout << "Maximum vTx value = " << vMax << endl;
+        cout << "Minimum vTx value = " << vMin << endl;
+
         vector<double> probabilityA(nBins, 0.0);
         vector<double> probabilityB(nBins, 0.0);
 
@@ -554,7 +828,7 @@ int main()
             probabilityB[i] = distributionB[i] / areaUnderGraph;
         }
 
-        ofstream file("vMag_05_Tx.txt");
+        ofstream file("reflected_velocity_tangential_x.txt");
 
         for (i = 0; i < nBins; i++)
         {
@@ -566,82 +840,15 @@ int main()
             file << binsA[i] << " " << distributionA[i] << " " << probabilityA[i] << endl;
         }
     }
+    //***********************************************************************************
 
-    // Tx 1.0
-    {
-        // velocity distribution for selected range
-        vector<double> distributionA(nBins, 0.0);
-        vector<double> distributionB(nBins, 0.0);
-        vector<double> binsA(nBins, 0.0);
-        vector<double> binsB(nBins, 0.0);
-        int count = 0;
 
-        for (i = 0; i < nBins; i++)
-        {
-            binsA[i] = binWidth * 0.5 + binWidth * i;
-            binsB[i] = -binsA[i];
-        }
 
-        for (i = 0; i < nPts; i++)
-        {
-            if ((vMagi[i] > 0) && (vMagi[i] <= vM * 1.0))
-            {
-                if (vTx[i] >= 0)
-                {
-                    bo = floor(vTx[i] / binWidth);
 
-                    if (bo >= nBins)
-                    {
-                        bo = nBins - 1;
-                    }
 
-                    distributionA[bo] += 1.0;
-                }
-                else
-                {
-                    bo = floor(abs(vTx[i]) / binWidth);
 
-                    if (bo >= nBins)
-                    {
-                        bo = nBins - 1;
-                    }
 
-                    distributionB[bo] += 1.0;
-                }
-                count++;
-            }
-        }
-        cout << "Number of molecules with incident velocity magnitude smaller than 1.0: " << count << endl;
-        vector<double> probabilityA(nBins, 0.0);
-        vector<double> probabilityB(nBins, 0.0);
 
-        // scale with area
-        double areaUnderGraph = 0.0;
-
-        for (i = 0; i < nBins - 1; i++)
-        {
-            areaUnderGraph += (binsA[i + 1] - binsA[i]) * (distributionA[i] + distributionA[i + 1]) * 0.5;
-            areaUnderGraph += abs(binsB[i + 1] - binsB[i]) * (distributionB[i] + distributionB[i + 1]) * 0.5;
-        }
-
-        for (i = 0; i < nBins; i++)
-        {
-            probabilityA[i] = distributionA[i] / areaUnderGraph;
-            probabilityB[i] = distributionB[i] / areaUnderGraph;
-        }
-
-        ofstream file("vMag_10_Tx.txt");
-
-        for (i = 0; i < nBins; i++)
-        {
-            file << binsB[nBins - i - 1] << " " << distributionB[nBins - i - 1] << " " << probabilityB[nBins - i - 1] << endl;
-        }
-
-        for (i = 0; i < nBins; i++)
-        {
-            file << binsA[i] << " " << distributionA[i] << " " << probabilityA[i] << endl;
-        }
-    }    
 
 
     return 0;

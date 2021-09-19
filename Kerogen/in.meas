@@ -1,0 +1,92 @@
+############################################################
+#      methane  
+#      
+############################################################
+log             log.meas
+echo            both
+
+units           real  
+dimension       3 
+boundary        p p p
+#atom_style      full
+
+neighbor        0.3 bin
+#neigh_modify    every 1 delay 1 check yes
+neigh_modify    delay 0  one 10000
+
+processors      16 16 2 
+read_restart    restart.*
+
+############################################################ INTERACTION
+group      methane          type 1
+group      barrier          type 2
+group      carbonK          type 3
+group      oxygenK          type 4
+group      hydrogenK        type 5
+
+group      kerogen union carbonK oxygenK hydrogenK
+
+variable     rCut equal 15
+pair_style   lj/cut ${rCut} 
+pair_modify  shift yes mix arithmetic      # Lorentz Berthelot rules 1 - 2
+
+pair_coeff   1 1 0.2941 3.730 ${rCut}     
+#pair_coeff   1 1 0 3.730 0.1               # SWITCHING OFF CH4 CH4 interactions
+pair_coeff   2 2 15.9743 2.4710 ${rCut}    # wall-wall
+
+pair_coeff   3 3 0.0556 3.360 0.1 # c-c
+pair_coeff   4 4 0.1550 3.170 0.1 # o-o
+pair_coeff   5 5 0.0298 2.420 0.1 # h-h 
+
+# LB mixing 
+pair_coeff   1 2 0.005   3.545 ${rCut}     # wall-CH4 imp
+pair_coeff   1 3 0.12787 3.545 ${rCut}     # C - CH4 imp
+pair_coeff   1 4 0.21351 3.450 ${rCut}     # O - CH4 imp
+pair_coeff   1 5 0.09362 3.075 ${rCut}     # H - CH4 imp
+
+pair_coeff   2 3 0.000 2.5 0.1
+pair_coeff   2 4 0.000 2.5 0.1
+pair_coeff   2 5 0.000 2.5 0.1
+
+fix    w1 barrier setforce 0 0 0
+# fix    w2 kerogen setforce 0 0 0
+
+##############################################################
+
+variable        T equal 423
+fix             NVTKER kerogen nve  
+fix             TKER kerogen spring/self 100.0
+fix             3 methane nve
+#fix             f3 kerogen ti/spring 100.0 2000 1000 function 2
+fix             f4 kerogen langevin $T $T 50 1230917 zero yes 
+
+# Poiseuille flow 
+variable        SIForce  equal 8.0e-15               # constant force for each atom in SI unit
+variable        refForce equal 69.4786e-12           # real unit convert to SI unit
+variable        forcePerAtom equal ${SIForce}/${refForce}
+fix             FIX_FORCE methane addforce ${forcePerAtom} 0.0 0.0
+
+##############################################################
+# compute myKE methane ke/atom
+# compute myPE methane pe/atom
+
+# compute ke methane reduce sum c_myKE
+# compute pe methane reduce sum c_myPE
+
+compute         dstress methane stress/atom NULL 
+############################################################ RUN PARAMETERS
+
+
+timestep        0.5
+thermo_style    custom step temp pe etotal press
+thermo          2000
+
+
+#dump            1 methane custom 1000 dump_meas_gas.lammpstrj id type x y z vx vy vz c_myKE c_myPE c_dstress[1] c_dstress[2] c_dstress[3] c_dstress[4] c_dstress[5] c_dstress[6]
+dump            1 methane custom 500 dump_meas_gas.lammpstrj id type x y z vx vy vz c_dstress[1] c_dstress[2] c_dstress[3]
+dump_modify     1 sort id
+
+run             10000000 every 1000000 "write_restart restart.*"
+
+undump          1
+

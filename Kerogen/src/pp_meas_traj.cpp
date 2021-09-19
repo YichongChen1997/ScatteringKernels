@@ -37,7 +37,7 @@ int main()
     int nTimeSteps; // CHANGE, use command line: grep -o 'TIMESTEP' dump_meas.lammpstrj | wc -l
     nSteps >> nTimeSteps;
 
-    // The Ids of tracked molecules
+    // The Ids of tracked molecules (random)
     vector<int> molIds;
     molIds.push_back(53);
     molIds.push_back(235);
@@ -132,7 +132,7 @@ int main()
             }
         }
     }
-    
+
     {
         // Cartesian distance to the wall
         cout << "Distance to the wall" << endl;
@@ -152,6 +152,5 @@ int main()
         }
 
     }
-
     return 0;
 }
