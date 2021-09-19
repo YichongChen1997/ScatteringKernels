@@ -14,4 +14,4 @@ There are two types surfaces have been considered, namely plantium and kerogen s
 
 4. Makefile : compile the C++ codes in a quicker way.
 
-5. equil.slurm/meas.slurm : bash script for submitting jobs in ARCHER2 (HPC). 
+5. equil.slurm/meas.slurm : bash script for submitting jobs in ARCHER2 (HPC).
