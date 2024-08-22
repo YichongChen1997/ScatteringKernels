@@ -13,7 +13,7 @@ Chen, Y., Li, J., Datta, S., Docherty, S.Y., Gibelli, L. and Borg, M.K., 2022. M
 ----------------------------------------------------------------------
 The *ScatteringKernels* repository includes the following files and directories:
 
-README                this file      
+README              - this file      
 LICENSE             - the GNU General Public License (GPL)       
 examples            - simple test problems       
 initialisation      - pre-processing of MD configuration         
