@@ -1,0 +1,88 @@
+############################################################
+#      methane
+############################################################
+log             log.meas
+echo            both
+
+units           real  
+dimension       3 
+boundary        p p p
+#atom_style      full
+
+neighbor        0.3 bin
+#neigh_modify    every 1 delay 1 check yes
+neigh_modify    delay 0  one 10000
+
+processors      8 8 2
+read_restart    restart.*
+
+############################################################ INTERACTION
+
+group      methane          type 1
+group      wallB            type 2
+group      wallT            type 3
+group      wallrigid        type 4
+group      adsorbent        type 5
+
+group      wall union wallB wallT
+
+variable     rCut equal 15
+pair_style   lj/cut ${rCut} 
+pair_modify  shift yes mix arithmetic # Lorentz Berthelot rules 1 - 2
+
+pair_coeff   1 1 0.2941 3.730 ${rCut} 
+# pair_coeff   1 1 0.0000 3.730 0.1
+
+pair_coeff   2 2 15.9743 2.4710 ${rCut} # wall-wall
+pair_coeff   3 3 15.9743 2.4710 ${rCut} # wall-wall
+pair_coeff   4 4 0.0000  3.170  0.1     # rwall-rwall off 
+pair_coeff   5 5 0.2941  3.730  ${rCut} # adsorbent - adsorbent same as CH4-CH4
+
+# LB mixing
+pair_coeff   1 2 0.12787 3.545 ${rCut} # wall-CH4 imp
+pair_coeff   1 3 0.12787 3.545 ${rCut} # wall-CH4 imp
+pair_coeff   1 4 0.12787 3.545 ${rCut} # wall-CH4 imp
+pair_coeff   1 5 0.2941  3.730 ${rCut} # CH4 - adsorbent same as CH4-CH4
+
+pair_coeff   2 3 15.9743 2.4710 ${rCut} # wall-wall same as wall-wall
+pair_coeff   2 4 15.9743 2.4710 ${rCut} # wall-rwall same as wall-wall
+pair_coeff   3 4 15.9743 2.4710 ${rCut} # wall-rwall same as wall-wall
+
+pair_coeff   2 5 1.2787 3.545 ${rCut} # adsorbent - wall imp (Note that the potential well has been increased)
+pair_coeff   3 5 1.2787 3.545 ${rCut} # adsorbent - wall imp
+pair_coeff   4 5 1.2787 3.545 ${rCut} # adsorbent - wall imp
+
+##############################################################
+
+fix             w3 wallrigid setforce 0 0 0
+fix             1 wallB     nvt temp 423 423 100
+fix             2 wallT     nvt temp 423 423 100
+fix             3 methane   nve
+fix             4 adsorbent nve
+
+# Poiseuille flow 
+variable        SIForce  equal 1.0e-15               # constant force for each atom in SI unit
+variable        refForce equal 69.4786e-12           # real unit convert to SI unit
+variable        forcePerAtom equal ${SIForce}/${refForce}
+fix             FIX_FORCE methane addforce ${forcePerAtom} 0.0 0.0
+
+##############################################################
+compute         dstress  methane   stress/atom NULL
+compute         dstress2 adsorbent stress/atom NULL 
+############################################################ RUN PARAMETERS
+
+timestep        2.0
+thermo_style    custom step temp pe etotal press
+thermo          2000
+
+dump            1 methane custom 500 dump_meas_gas.lammpstrj id type x y z vx vy vz c_dstress[1] c_dstress[2] c_dstress[3]
+dump_modify     1 sort id
+
+dump            2 adsorbent custom 5000 dump_meas_adsorbent.lammpstrj id type x y z vx vy vz c_dstress2[1] c_dstress2[2] c_dstress2[3]
+dump_modify     2 sort id
+
+run             5000000 every 1000000 "write_restart restart.*"
+
+undump          1
+undump          2
+

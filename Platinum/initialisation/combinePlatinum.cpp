@@ -52,7 +52,7 @@ int main()
     double atomForceSi = 8.0e-15;                       // Newtons (ensure the magnitude of velocity at decades of m/s)
     double atomForceReal = atomForceSi / (69.4786e-12); // Kcal/mole - Angstrom
 
-    double pressure = 5.0; // MPa
+    double pressure = 3.0; // MPa
     bool setPressure = true;
 
     double rho = 0;

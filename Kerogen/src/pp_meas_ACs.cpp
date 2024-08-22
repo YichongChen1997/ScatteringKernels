@@ -448,7 +448,7 @@ int main()
 
         // Partial TMAC
         /* Method One (General expression) */
-        sigmaTx_p1 = (vTxi_partial - vTx_partial) / vTxi_partial;
+        sigmaTx_p1 = (vTxi_partial - vTx_partial) / (vTxi_partial - 0) ;
 
         /* Method Two (Least-Squares fitting) */
         double beta_nu = 0.0, beta_de = 0.0;

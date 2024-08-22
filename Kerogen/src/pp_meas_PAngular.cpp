@@ -386,7 +386,7 @@ int main()
     cout << "The average reflected velocity of tangential X components: " << ave_vTx << endl;
     cout << endl;
 
-    // Incident angle (13 - 17)
+    // Incident angle (13 - 17) 15
     {
         // Velocity distribution for selected range (Normal)
         vector<double> distribution(nBins, 0.0);

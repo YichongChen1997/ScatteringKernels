@@ -32,7 +32,7 @@ int main()
 
     //********* INPUT ***********
     ifstream nSteps("nTimeSteps.dat", ios::in);
-    int nTimeSteps; // CHANGE, use command line: grep -o 'TIMESTEP' dump_meas.lammpstrj | wc -l
+    int nTimeSteps; // CHANGE, use command line: grep -o 'TIMESTEP' dump_meas_gas.lammpstrj | wc -l
     nSteps >> nTimeSteps;
 
     int skipTimeStep = 101; // when to start measuring bins -> after steady state
@@ -325,7 +325,7 @@ int main()
         {
             bin = zLo + binWidth * 0.5 + binWidth * i; // coordinate of bin
 
-            binVol = binWidth * Lx * Ly * refVolume; // volume of each bin
+            binVol = binWidth * Lx * Ly * refVolume;   // volume of each bin
 
             rho = molField[i] * mi / (binVol * nAvSteps); // average density of each bin over time
 
@@ -340,7 +340,7 @@ int main()
 
             pressure = -(stressField[i] / (3.0 * binVol * nAvSteps / refVolume)) * refPressure / 1e6;
 
-            binFile1 << bin << '\t'
+            binFile1<< bin << '\t'
                     << rho << '\t'
                     << molField[i] / (binVol * nAvSteps) << '\t' // number density
                     << vel << '\t'

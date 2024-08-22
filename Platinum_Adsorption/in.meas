@@ -30,7 +30,7 @@ variable     rCut equal 15
 pair_style   lj/cut ${rCut} 
 pair_modify  shift yes mix arithmetic # Lorentz Berthelot rules 1 - 2
 
-pair_coeff   1 1 0.0000 3.730 0.1     # Switch-off the intermolecular interactions among the scattering molecules
+pair_coeff   1 1 0.0000 3.730 0.1       # Switch-off the intermolecular interactions among the scattering molecules
 
 pair_coeff   2 2 15.9743 2.4710 ${rCut} # wall-wall
 pair_coeff   3 3 15.9743 2.4710 ${rCut} # wall-wall
@@ -48,19 +48,21 @@ pair_coeff   2 3 15.9743 2.4710 ${rCut} # wall- wall  same as wall-wall
 pair_coeff   2 4 15.9743 2.4710 ${rCut} # wall- rwall same as wall-wall
 pair_coeff   3 4 15.9743 2.4710 ${rCut} # wall- rwall same as wall-wall
 
-pair_coeff   2 5 0.0000 3.545 0.1 # adsorbent - wall imp
-pair_coeff   3 5 0.0000 3.545 0.1 # adsorbent - wall imp
-pair_coeff   4 5 0.0000 3.545 0.1 # adsorbent - wall imp
+pair_coeff   2 5 0.12787 3.545 ${rCut}  # adsorbent - wall imp
+pair_coeff   3 5 0.12787 3.545 ${rCut}  # adsorbent - wall imp
+pair_coeff   4 5 0.12787 3.545 ${rCut}  # adsorbent - wall imp
 
 ##############################################################
 
 fix             w3 wallrigid setforce 0 0 0
 
-fix             1 wallB     nvt temp 423 423 100
-fix             2 wallT     nvt temp 423 423 100
+variable        T equal 423
+
+fix             1 wallB     nvt temp $T $T 100
+fix             2 wallT     nvt temp $T $T 100
 fix             3 methane   nve
 fix             4 adsorbent nve
-fix             5 adsorbent spring/self 100.0
+fix             5 adsorbent spring/self 1.0
 fix             6 adsorbent langevin $T $T 50 1230917 zero yes
 
 # Poiseuille flow 
@@ -74,7 +76,7 @@ compute         dstress  methane   stress/atom NULL
 compute         dstress2 adsorbent stress/atom NULL 
 ############################################################ RUN PARAMETERS
 
-timestep        2.0
+timestep        1.0
 thermo_style    custom step temp pe etotal press
 thermo          1000
 
@@ -84,7 +86,7 @@ dump_modify     1 sort id
 dump            2 adsorbent custom 500 dump_meas_adsorbent.lammpstrj id type x y z vx vy vz c_dstress2[1] c_dstress2[2] c_dstress2[3]
 dump_modify     2 sort id
 
-run             5000000 every 500000 "write_restart restart.*"
+run             5000000 every 100000 "write_restart restart.*"
 
 undump          1
 undump          2

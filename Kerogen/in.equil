@@ -59,10 +59,9 @@ velocity        methane create $T 482748 dist gaussian mom yes
 fix             NVT methane nvt temp $T $T 100
 fix             NVTKER kerogen nve  
 fix             TKER kerogen spring/self 100.0
-#fix             f3 kerogen ti/spring 100.0 2000 1000 function 2
 fix             f4 kerogen langevin $T $T 50 1230917 zero yes 
 
-compute         dstress methane stress/atom NULL 
+compute         dstress methane stress/atom NULL
 
 timestep        0.5
 thermo_style    custom step temp pe etotal press

@@ -34,6 +34,7 @@ int main()
     //**** CHANGE **************
     double Tw = 423;                    // temperature of wall (Kelvin)
     double vM = sqrt(2 * kB * Tw / mi); // most probable speed
+    double NorV = sqrt(kB * Tw / mi);   // reference velocity
     double MCsigma = 3.545;             // diameter of methane
 
     ifstream Height("Height.dat", ios::in);
@@ -49,6 +50,7 @@ int main()
     ifstream data("dump_meas_gas.lammpstrj", ios::in);
 
     ofstream output("EACs.txt", ios::out);
+    ofstream output2("EACs_Tx.txt", ios::out);
 
     int nWallCollisions = 0;    // collect total number of collided molecules with wall
     int nStartedCollisions = 0; // collect number of collisions that have started
@@ -280,6 +282,7 @@ int main()
     cout << endl;
 
     vector<double> ke, kei;
+    vector<double> keTx, keTxi;
 
     int coTop = 0, coBottom = 0;
 
@@ -290,6 +293,9 @@ int main()
             ke.push_back(vxEnd[i] * vxEnd[i] + vyEnd[i] * vyEnd[i] + vzEnd[i] * vzEnd[i]);
             kei.push_back(vxStart[i] * vxStart[i] + vyStart[i] * vyStart[i] + vzStart[i] * vzStart[i]);
 
+            keTx.push_back(vxEnd[i] * vxEnd[i]);
+            keTxi.push_back(vxStart[i] * vxStart[i]);
+
             coTop++;
         }
 
@@ -297,6 +303,9 @@ int main()
         {
             ke.push_back(vxEnd[i] * vxEnd[i] + vyEnd[i] * vyEnd[i] + vzEnd[i] * vzEnd[i]);
             kei.push_back(vxStart[i] * vxStart[i] + vyStart[i] * vyStart[i] + vzStart[i] * vzStart[i]);
+
+            keTx.push_back(vxEnd[i] * vxEnd[i]);
+            keTxi.push_back(vxStart[i] * vxStart[i]);
 
             coBottom++;
         }
@@ -316,13 +325,22 @@ int main()
         double EAC_f_v1, EAC_f_v2;
         double EAC_p_v1, EAC_p_v2;
 
+        double EACX_f_v1, EACX_f_v2;
+        double EACX_p_v1, EACX_p_v2;
+
         double KEi_f_all = 0.0, KE_f_all = 0.0;
         double KEi_f_mean, KE_f_mean;
+
+        double KEXi_f_all = 0.0, KEX_f_all = 0.0;
+        double KEXi_f_mean, KEX_f_mean;
 
         double KEi_p_all = 0.0, KE_p_all = 0.0;
         double KEi_p_mean, KE_p_mean;
 
-        int countEF = 0, countEP = 0;
+        double KEXi_p_all = 0.0, KEX_p_all = 0.0;
+        double KEXi_p_mean, KEX_p_mean;
+
+        int countEF = 0, countEP = 0, countEP2 = 0;
 
         double beta_nu = 0.0, beta_de = 0.0;
 
@@ -332,26 +350,37 @@ int main()
             // summation of the total kinetic energy
             KEi_f_all += kei[i];
             KE_f_all += ke[i];
+
+            KEXi_f_all += keTxi[i];
+            KEX_f_all += keTx[i];
+
             countEF++;
 
-            if ((kei[i] > vM * vM * (range[n] - 0.1)) && (kei[i] <= vM * vM * (range[n] + 0.1)))
+            if ((kei[i] > NorV * NorV * (range[n] - 0.1)) && (kei[i] <= NorV * NorV * (range[n] + 0.1)))
             {
                 KEi_p_all += kei[i];
                 KE_p_all += ke[i];
                 countEP++;
             }
-        }
-        // Global EAC
 
+            if ((keTxi[i] > NorV * NorV * (range[n] - 0.1)) && (keTxi[i] <= NorV * NorV * (range[n] + 0.1)))
+            {
+                KEXi_p_all += keTxi[i];
+                KEX_p_all += keTx[i];
+                countEP2++;
+            }
+        }
+
+        // Global EAC ---------------------------------------------------------------------
         /* Method One */
         EAC_f_v1 = (KEi_f_all - KE_f_all) / (KEi_f_all - (4 * kB * Tw / mi) * countEF);
-        cout << "Value of total incident energy: " << KEi_f_all << endl;
-        cout << "Value of total reflected energy: " << KE_f_all << endl;
-        cout << "Expected total energy: " << (4 * kB * Tw / mi) * countEF << endl;
-        cout << "Energy Accommodation coefficient is: " << EAC_f_v1 << endl;
+        // cout << "Value of total incident energy: " << KEi_f_all << endl;
+        // cout << "Value of total reflected energy: " << KE_f_all << endl;
+        // cout << "Expected total energy: " << (4 * kB * Tw / mi) * countEF << endl;
+        // cout << "Energy Accommodation coefficient is: " << EAC_f_v1 << endl;
 
         /* Method Two */
-        cout << "No. of summed data: " << countEF << endl;
+        // cout << "No. of summed data: " << countEF << endl;
         KEi_f_mean = KEi_f_all / countEF;
         KE_f_mean = KE_f_all / countEF;
         for (int i = 0; i < nPts; ++i)
@@ -360,8 +389,29 @@ int main()
             beta_de += (kei[i] - KEi_f_mean) * (kei[i] - KEi_f_mean); // beta denominator
         }
         EAC_f_v2 = 1 - beta_nu / beta_de;
+        // --------------------------------------------------------------------------------
 
-        // Partial EAC
+        // Global EAC_x -------------------------------------------------------------------
+        /* Method One */
+        EACX_f_v1 = (KEXi_f_all - KEX_f_all) / (KEXi_f_all - (kB * Tw / mi) * countEF);
+        cout << "Value of incident tangential energy: " << KEXi_f_all << endl;
+        cout << "Value of reflected tangential energy: " << KEX_f_all << endl;
+        cout << "Expected tangential energy: " << (kB * Tw / mi) * countEF << endl;
+        cout << "Tangential Energy Accommodation coefficient is: " << EACX_f_v1 << endl;
+
+        /* Method Two */
+        cout << "No. of summed data: " << countEF << endl;
+        KEXi_f_mean = KEXi_f_all / countEF;
+        KEX_f_mean = KEX_f_all / countEF;
+        for (int i = 0; i < nPts; ++i)
+        {
+            beta_nu += (keTxi[i] - KEXi_f_mean) * (keTx[i] - KEX_f_mean);   // beta numerator
+            beta_de += (keTxi[i] - KEXi_f_mean) * (keTxi[i] - KEXi_f_mean); // beta denominator
+        }
+        EACX_f_v2 = 1 - beta_nu / beta_de;
+        // --------------------------------------------------------------------------------
+
+        // Partial EAC --------------------------------------------------------------------
         /* Method One */
         cout << "countEP is: " << countEP << endl;
         KEi_p_mean = KEi_p_all / countEP;
@@ -369,20 +419,42 @@ int main()
 
         EAC_p_v1 = (KEi_p_mean - KE_p_mean) / (KEi_p_mean - (4 * kB * Tw / mi));
 
+        /* Method Two */
+        beta_nu = 0.0, beta_de = 0.0;
+        for (int i = 0; i < nPts; i++)
+        {
+            if ((kei[i] > NorV * NorV * (range[n] - 0.1)) && (kei[i] <= NorV * NorV * (range[n] + 0.1)))
+            {
+                beta_nu += (kei[i] - KEi_p_mean) * (ke[i] - KE_p_mean);
+                beta_de += (kei[i] - KEi_p_mean) * (kei[i] - KEi_p_mean);
+            }
+        }
+        EAC_p_v2 = 1 - beta_nu / beta_de;
+        // --------------------------------------------------------------------------------
+
+        // Partial EAC x ------------------------------------------------------------------
+        /* Method One */
+        cout << "countEP2 is: " << countEP2 << endl;
+        KEXi_p_mean = KEXi_p_all / countEP2;
+        KEX_p_mean = KEX_p_all / countEP2;
+
+        EACX_p_v1 = (KEXi_p_mean - KEX_p_mean) / (KEXi_p_mean - (kB * Tw / mi));
 
         /* Method Two */
         beta_nu = 0.0, beta_de = 0.0;
         for (int i = 0; i < nPts; i++)
         {
-            if ((kei[i] > vM * vM * (range[n] - 0.1)) && (kei[i] <= vM * vM * (range[n] + 0.1)))
+            if ((keTxi[i] > NorV * NorV * (range[n] - 0.1)) && (keTxi[i] <= NorV * NorV * (range[n] + 0.1)))
             {
-            beta_nu += (kei[i] - KEi_p_mean) * (ke[i] - KE_p_mean);
-            beta_de += (kei[i] - KEi_p_mean) * (kei[i] - KEi_p_mean);
+                beta_nu += (keTxi[i] - KEXi_p_mean) * (keTx[i] - KEX_p_mean);
+                beta_de += (keTxi[i] - KEXi_p_mean) * (keTxi[i] - KEXi_p_mean);
             }
         }
-        EAC_p_v2 = 1 - beta_nu / beta_de;
+        EACX_p_v2 = 1 - beta_nu / beta_de;
+        // --------------------------------------------------------------------------------
 
-        output << range[n] << " " << EAC_p_v1 << " " << EAC_p_v2 << " " << EAC_f_v1 << " " << EAC_f_v2 << endl;
+        output  << range[n] << " " << EAC_p_v1 << " " << EAC_p_v2 << " " << EAC_f_v1 << " " << EAC_f_v2 << endl;
+        output2 << range[n] << " " << EACX_p_v1 << " " << EACX_p_v2 << " " << EACX_f_v1 << " " << EACX_f_v2 << endl;
     }
     return 0;
 }

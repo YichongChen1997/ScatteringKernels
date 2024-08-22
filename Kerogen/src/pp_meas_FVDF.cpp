@@ -37,7 +37,7 @@ int main()
     int nTimeSteps; // CHANGE, use command line: grep -o 'TIMESTEP' dump_meas.lammpstrj | wc -l
     nSteps >> nTimeSteps;
 
-    double binWidth = 10; // binwidth of velocity
+    double binWidth = 10; // binwidth of velocity (m/s)
     int maxVout = vM * 4; // max output velocity
     int nBins = ceil(maxVout / binWidth);
 
@@ -178,7 +178,7 @@ int main()
                 }
                 else
                 {
-                    if ((z < rCut) || (z > H - rCut))
+                    if ((z < rCut) || (z > H - rCut)) // within the near-surface layer
                     {
                         if (startFromMiddle[n])
                         {
@@ -201,7 +201,7 @@ int main()
                         startFromMiddle[n] = false;
                     }
 
-                    else if ((z >= rCut) && (z <= H - rCut)) // YC: the middle region
+                    else if ((z >= rCut) && (z <= H - rCut)) // YC: the bulk region
                     {
                         if (crossedStart[n])
                         {
@@ -841,12 +841,6 @@ int main()
         }
     }
     //***********************************************************************************
-
-
-
-
-
-
 
 
 

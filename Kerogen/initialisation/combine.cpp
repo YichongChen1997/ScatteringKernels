@@ -54,9 +54,9 @@ int main()
     double thickness = 15;
     
     // Simulation box dimension
-    double X = 200; // rough estimates
-    double Y = 200;
-    double H = 40;
+    double X = 50; // rough estimates
+    double Y = 50;
+    double H = 100;
     
     //***************************
 

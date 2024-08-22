@@ -165,7 +165,7 @@ int main()
                 {
                     if ((z >= rCut) && (z <= H - rCut))
                     {
-                        startFromMiddle[n] = true; // inside middle region
+                        startFromMiddle[n] = true; // inside bulk region
                     }
                     tM[n] = t;
 
