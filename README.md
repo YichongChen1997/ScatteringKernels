@@ -16,10 +16,10 @@ Chen, Y., Li, J., Datta, S., Docherty, S.Y., Gibelli, L. and Borg, M.K., 2022. M
 
 The *Scattering Kernel* includes the following files and directories:
 
-README                - This file
-LICENSE               - The GNU General Public License (GPL)
-examples              - Simple test problems
-initialisation        - Pre-processing of MD configuration
-LAMMPS_input          - Example LAMMPS input scripts
-tools                 - Post-processing of LAMMPS dump files
-Makefile              - Compilation of various post-processing C++ files
+README                this file
+LICENSE               the GNU General Public License (GPL)
+examples              simple test problems
+initialisation        pre-processing of MD configuration
+LAMMPS_input          example LAMMPS input scripts
+tools                 post-processing of LAMMPS dump files
+Makefile              compilation of various post-processing C++ files
