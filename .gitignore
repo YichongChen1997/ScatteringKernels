@@ -1,5 +1,6 @@
 *.dat
 *.txt
 *.trj
+*.out
 *.lammpstrj
 restart.*
