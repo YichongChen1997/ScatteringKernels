@@ -1,0 +1,8 @@
+0     200           # xLo,  xHi
+0     200           # yLo,  yHi 
+60   15   15   3    # channel height, cut-off distance, wall thickness, wall interface
+3   1.5             # zDimension of the gas block and unitcell size
+300                 # incident molecular temperature
+1.0  1.0  1.0       # non-equilibrium shifts
+195.084             # molecular Mass of Wall
+39.948              # molecular Mass of Gas

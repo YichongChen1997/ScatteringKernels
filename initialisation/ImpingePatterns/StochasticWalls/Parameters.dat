@@ -1,0 +1,7 @@
+0   200            # xLo,  xHi
+0   200            # yLo,  yHi 
+0   60             # zLo,  zHi
+6    1.5   15      # zDimension of the gas block & unitcell size & cut-off distance
+300                # incident molecular temperature
+0.0  0.0  0.0      # non-equilibrium shifts
+39.948             # molecular Mass of Gas
