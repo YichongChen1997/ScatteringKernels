@@ -1,0 +1,85 @@
+############################################################
+#      GAS  
+############################################################
+log             log.meas
+echo            both
+
+units           real
+dimension       3
+boundary        p p p
+# atom_style      full
+
+neighbor        0.3 bin
+#neigh_modify    every 1 delay 1 check yes
+neigh_modify    delay 0  one 10000
+
+processors      8 8 2
+read_restart    restart.*
+
+############################################################ INTERACTION
+group      GAS              type 1
+group      wallB            type 2
+group      wallT            type 3
+group      wallrigid        type 4
+
+group      wall union wallB wallT
+
+variable     rCut   equal 15
+variable     Tw_T   equal 300
+variable     Tw_B   equal 300
+
+variable   epsilonGas  equal  0.2313
+variable   sigmaGas    equal  3.3504
+
+variable   epsilonWall equal  15.9743
+variable   sigmaWall   equal  2.4710
+
+variable   epsilonGSI  equal  0.15727
+variable   sigmaGSI    equal  2.94
+
+pair_style   lj/cut ${rCut}
+pair_modify  shift yes mix arithmetic # Lorentz Berthelot rules 1 - 2
+
+#pair_coeff   1 1 ${epsilonGas} ${sigmaGas} ${rCut}
+pair_coeff   1 1 0.0000 ${sigmaGas} 0.1
+
+pair_coeff   2 2 ${epsilonWall}  ${sigmaWall}  ${rCut}  # wall-wall
+pair_coeff   3 3 ${epsilonWall}  ${sigmaWall}  ${rCut}  # wall-wall
+pair_coeff   4 4 0.0000 3.170 0.1     # rwall-rwall off
+
+# LB mixing
+pair_coeff   1 2 ${epsilonGSI} ${sigmaGSI} ${rCut}      # gas-surface imp
+pair_coeff   1 3 ${epsilonGSI} ${sigmaGSI} ${rCut}      # gas-surface imp
+pair_coeff   1 4 ${epsilonGSI} ${sigmaGSI} ${rCut}      # gas-surface imp
+
+pair_coeff   2 3 ${epsilonWall} ${sigmaWall} ${rCut}    # wall-wall same as wall-wall
+pair_coeff   2 4 ${epsilonWall} ${sigmaWall} ${rCut}    # wall-wall same as wall-wall
+pair_coeff   3 4 ${epsilonWall} ${sigmaWall} ${rCut}    # wall-wall same as wall-wall
+##############################################################
+fix             wfixed  wallrigid setforce 0 0 0
+fix             1 wallT   nvt temp ${Tw_T} ${Tw_T} 100
+fix             2 wallB   nvt temp ${Tw_B} ${Tw_B} 100
+fix             3 GAS     nve
+
+# Poiseuille flow 
+# variable        SIForce  equal 5.0e-15               # constant force for each atom in SI unit
+# variable        refForce equal 69.4786e-12           # real unit convert to SI unit
+# variable        forcePerAtom equal ${SIForce}/${refForce}
+# fix             FIX_FORCE GAS addforce ${forcePerAtom} 0.0 0.0
+
+##############################################################
+compute         dstress GAS     stress/atom NULL
+compute         KE      GAS     ke/atom
+compute         PE      GAS     pe/atom  
+############################################################ RUN PARAMETERS
+
+timestep        1.0
+thermo_style    custom step temp pe etotal press
+thermo          10000
+
+dump            1 GAS custom 200 dump_meas_gas.lammpstrj id type x y z vx vy vz c_dstress[1] c_dstress[2] c_dstress[3] c_KE c_PE
+dump_modify     1 sort id
+
+run             2000000 every 2000000 "write_restart restart.*"
+
+undump          1
