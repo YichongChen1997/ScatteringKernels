@@ -1,5 +1,6 @@
 *.dat
 !unitCell.dat
+!Parameters.dat
 *.txt
 *.trj
 *.out
