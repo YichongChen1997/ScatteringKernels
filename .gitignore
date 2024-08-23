@@ -1,4 +1,5 @@
 *.dat
+!unitCell.dat
 *.txt
 *.trj
 *.out
