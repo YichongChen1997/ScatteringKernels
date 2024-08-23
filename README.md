@@ -18,7 +18,8 @@ LICENSE             - the GNU General Public License (GPL)
 examples            - simple test problems       
 initialisation      - pre-processing of MD configuration         
 LAMMPS_input        - example LAMMPS input scripts       
-tools               - post-processing of LAMMPS dump files       
+tools               - post-processing of LAMMPS dump files
+LAMMPS_src          - implementation of scattering kernels in LAMMPS
 Makefile            - compilation of various post-processing C++ files       
 
 ![Flowchart showing the steps involved in an MD simulation of gas-surface interactions using LAMMPS.](FlowChart.png)
