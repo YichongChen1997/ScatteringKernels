@@ -1,0 +1,98 @@
+################################################################################
+# 2D argon flow over a cylinder, D = 0.1 m, free stream along +x.
+#
+# Paths in this deck are relative to the run directory, two levels below
+# SPARTA_input/. Write the geometry and the run directories first, then execute
+# the generated script:
+#   python3 make_geom.py
+#   python3 gen_runs.py
+#   runs/cyl_kn1_cllmd_extrap/cmd.sh
+#
+# Wall models, selected with -var WALLMODEL:
+#   diffuse    surf_collide diffuse, accommodation SIGMA
+#   cll        constant CLL with coefficients ALPHAN, ALPHAT
+#   cllmd      CLL with alpha_n, alpha_t looked up per collision in ALPHATABLE
+#   cllmdtrap  cllmd plus an explicit trapping-desorption branch, PTRAPTABLE
+#   dvsm       resampling of the MD event library, which is passed through
+#              ALPHATABLE, e.g. -var ALPHATABLE events/dvsm_events.txt
+#
+# Other variables that can be set on the command line: SEED, SIGMA, ALPHAT,
+# ALPHAN, NRHO, UINF, TINF, TWALL, NPC, NX, NY, DT, NUNSTEADY, NSTEADY.
+#
+# NUNSTEADY and NSTEADY must be multiples of 100, because the stats output
+# reduces a fix with Nfreq = 100.
+# Surface points must be ordered clockwise for a 2D external flow, otherwise
+# SPARTA treats the interior of the body as the flow domain and emits nothing.
+################################################################################
+
+variable            SEED       index 12345
+seed                ${SEED}
+dimension           2
+global              gridcut -1.0 comm/sort yes
+
+variable            WALLMODEL  index diffuse
+variable            SIGMA      index 1.0
+variable            ALPHAT     index 0.87      # upper end of the constant-CLL bracket
+variable            ALPHAN     index 0.70
+variable            ALPHATABLE index ../../tables/alpha_arpt_table.txt
+variable            PTRAPTABLE index ../../tables/ptrap_arpt_table.txt
+variable            NRHO       index 1.2096e19  # Kn=1 at D=0.1m, Ar VHS, T=200K
+variable            UINF       index 7000.0
+variable            TINF       index 200.0
+variable            TWALL      index 300.0      # matches the MD wall temperature
+variable            NPC        index 20
+variable            NX         index 96
+variable            NY         index 80
+variable            DT         index 1.0e-7
+variable            NUNSTEADY  index 4000
+variable            NSTEADY    index 12000
+variable            NTOT       equal ${NUNSTEADY}+${NSTEADY}
+variable            NREP       equal ${NSTEADY}/10-20
+
+# domain and base grid, cylinder centred at the origin
+boundary            o o p
+create_box          -0.20 0.40 -0.25 0.25 -0.5 0.5
+create_grid         ${NX} ${NY} 1
+balance_grid        rcb cell
+
+variable            Vcell equal (0.60/${NX})*(0.50/${NY})*1.0
+variable            FNUM  equal ${NRHO}*${Vcell}/${NPC}
+global              nrho ${NRHO} fnum ${FNUM}
+
+species             ../../ar.species Ar
+mixture             gas Ar vstream ${UINF} 0.0 0.0 temp ${TINF}
+collide             vss gas ../../ar.vss
+
+read_surf           ../../geom/circle_D0.1.surf
+if "${WALLMODEL} == diffuse" then "surf_collide 1 diffuse ${TWALL} ${SIGMA}"
+if "${WALLMODEL} == cll"     then "surf_collide 1 cll ${TWALL} ${ALPHAN} ${ALPHAT} 1.0 1.0"
+if "${WALLMODEL} == cllmd"   then "surf_collide 1 cll/md ${TWALL} 1.0 1.0 ${ALPHATABLE}"
+if "${WALLMODEL} == dvsm"    then "surf_collide 1 dvsm/md ${TWALL} ${ALPHATABLE}"
+if "${WALLMODEL} == cllmdtrap" then "surf_collide 1 cll/md/trap ${TWALL} 1.0 1.0 ${ALPHATABLE} ${PTRAPTABLE}"
+surf_modify         all collide 1
+
+adapt_grid          all refine surf all 0.002 iterate 3 dir 1 1 0
+balance_grid        rcb cell
+
+fix                 in emit/face gas xlo ylo yhi
+fix                 fadapt adapt 1000 all refine coarsen particle 80 8 maxlevel 3
+
+# per-facet force fx, fy [N per metre of span] and net energy flux etot [W/m^2]
+compute             fall surf all all fx fy etot
+fix                 fmon_avg ave/surf all 10 10 100 c_fall[*]
+compute             ftot reduce sum f_fmon_avg[1] f_fmon_avg[2] f_fmon_avg[3]
+stats_style         step cpu np c_ftot[1] c_ftot[2] c_ftot[3]
+stats               200
+
+timestep            ${DT}
+run                 ${NUNSTEADY}
+
+# reset the accumulators and average over the whole steady window
+unfix               fmon_avg
+fix                 fmon_avg ave/surf all 10 10 100 c_fall[*]
+fix                 fwin_avg ave/surf all 10 ${NREP} ${NTOT} c_fall[*]
+dump                dsurf surf all ${NTOT} surf_force.dump &
+                    id v1x v1y v2x v2y f_fwin_avg[1] f_fwin_avg[2] f_fwin_avg[3]
+dump_modify         dsurf first no
+
+run                 ${NSTEADY}

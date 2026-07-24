@@ -1,0 +1,23 @@
+# alpha_arpt_table.txt: Ar-Pt accommodation coefficients alpha_t(eps,theta), alpha_n(eps,theta) [grazing=extrap]
+# from calibration_curve_ArPt.csv by build_table_arpt.py, 2026-07-24. LAMMPS monoenergetic beam, 2500 atoms per
+# condition, coefficients flux-weighted over the returned atoms only
+# 5 eps x 5 theta measured points, no separable form assumed. Padded with eps=0.05
+# (holds 0.4), theta=0 (holds 15) and theta=90 (extrapolated and clipped, or holds 75)
+# format: n_eps n_theta / eps_grid[eV] / theta_grid[deg] / alpha_t[ie][ith] / alpha_n[ie][ith]
+6 7
+0.0500 0.4000 1.0000 2.0000 5.0000 10.0000
+0.0 15.0 30.0 45.0 60.0 75.0 90.0
+# alpha_t
+0.56240 0.56240 0.41919 0.36673 0.29874 1.00000 1.00000
+0.56240 0.56240 0.41919 0.36673 0.29874 1.00000 1.00000
+0.66974 0.66974 0.47913 0.39940 0.22872 1.00000 1.00000
+0.66628 0.66628 0.57902 0.42048 0.27734 1.00000 1.00000
+0.75623 0.75623 0.74237 0.54479 0.24427 1.00000 1.00000
+0.79689 0.79689 0.78907 0.57231 0.34153 0.13145 0.00000
+# alpha_n
+0.58772 0.58772 0.46954 0.18433 0.00000 1.00000 1.00000
+0.58772 0.58772 0.46954 0.18433 0.00000 1.00000 1.00000
+0.59497 0.59497 0.63730 0.20158 0.14201 1.00000 1.00000
+0.65529 0.65529 0.47979 0.32615 0.00000 1.00000 1.00000
+0.79175 0.79175 0.51588 0.22404 0.11370 1.00000 1.00000
+0.73546 0.73546 0.60039 0.43703 0.00000 0.00000 0.00000

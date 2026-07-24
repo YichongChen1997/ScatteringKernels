@@ -1,0 +1,14 @@
+# ptrap_arpt_table_hold.txt: Ar-Pt trapping probability p_trap(eps,theta) [grazing=hold]
+# from calibration_curve_ArPt.csv by build_ptrap_table.py, 2026-07-24, as p_trap = 1 - N_return/2500
+# fifth argument of surf_collide cll/md/trap, padded as the alpha table
+# format: n_eps n_theta / eps_grid[eV] / theta_grid[deg] / ptrap[ie][ith]
+6 7
+0.0500 0.4000 1.0000 2.0000 5.0000 10.0000
+0.0 15.0 30.0 45.0 60.0 75.0 90.0
+# ptrap
+0.000000 0.000000 0.000000 0.018000 0.040400 1.000000 1.000000
+0.000000 0.000000 0.000000 0.018000 0.040400 1.000000 1.000000
+0.000000 0.000000 0.000400 0.000000 0.113200 1.000000 1.000000
+0.000000 0.000000 0.000000 0.000000 0.002400 1.000000 1.000000
+0.000000 0.000000 0.000000 0.000000 0.022400 1.000000 1.000000
+0.000000 0.000000 0.000000 0.000000 0.000000 0.702800 0.702800

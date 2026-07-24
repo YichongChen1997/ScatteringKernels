@@ -10,6 +10,8 @@ Chen, Y., Gibelli, L., Li, J. and Borg, M.K., 2023. Impact of surface physisorpt
 
 Chen, Y., Li, J., Datta, S., Docherty, S.Y., Gibelli, L. and Borg, M.K., 2022. Methane scattering on porous kerogen surfaces and its impact on mesopore transport in shale. [*Fuel*, 316, p.123259.](https://www.sciencedirect.com/science/article/abs/pii/S0016236122001284)
 
+The repository also carries the DSMC side of the same problem. Three wall models for SPARTA take the accommodation coefficients from molecular dynamics, resolved in incident energy and angle, and a fourth route resamples the scattering events directly. The tables, the event library and the input decks that run them are included, as used in the accompanying paper on gas-surface scattering kernels for rarefied hypersonic aerothermodynamic prediction (Chen et al., under review).
+
 ----------------------------------------------------------------------
 The *ScatteringKernels* repository includes the following files and directories:
 
@@ -18,7 +20,10 @@ LICENSE             - the GNU General Public License (GPL)
 examples            - simple test problems       
 initialisation      - pre-processing of MD configuration         
 LAMMPS_input        - example LAMMPS input scripts       
+LAMMPS_input/Beam_ArPt - molecular beam runs for Ar on Pt and the table builders
 LAMMPS_src          - implementation of scattering kernels in LAMMPS        
+SPARTA_input        - example SPARTA input decks, wall model tables and post-processing
+SPARTA_src          - implementation of scattering kernels in SPARTA
 tools               - post-processing of LAMMPS dump files      
 Makefile            - compilation of various post-processing C++ files       
 

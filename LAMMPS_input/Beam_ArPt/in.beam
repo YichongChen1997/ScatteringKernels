@@ -1,0 +1,316 @@
+########################################################################
+#    ARGON BEAM ON A PLATINUM WALL
+#    Atoms are inserted at a fixed speed and angle and deleted once they
+#    have scattered back into the bulk.
+########################################################################
+log             log.beam
+echo            both
+units           real
+dimension       3
+boundary        p p f
+atom_style      full
+
+neighbor        0.3 bin
+neigh_modify    delay 0  one 10000
+processors      * * *
+read_data       ../../ArPt_slab.data   # one case per directory under runs/
+
+shell      mkdir DataDir
+
+############################################################
+# COMMAND-LINE VARIABLES (with default values)
+# Usage: lmp -in in.beam -var V_INC 2000 -var THETA 45 -var PHI 0 -var T_WALL 800 -var T_GAS 300
+############################################################
+
+# incident speed [m/s]
+variable   V_INC   index  2000
+
+# polar angle from the surface normal [deg]: 0 = normal, 90 = grazing
+variable   THETA   index  45
+
+# azimuthal angle in the surface plane [deg]: 0 = +x
+variable   PHI     index  0
+
+# wall temperature [K]
+variable   T_WALL  index  300
+
+# gas temperature [K], sets the thermal spread of the beam
+variable   T_GAS   index  300
+
+############################################################ TUNABLE PARAMETERS
+variable   rCut  equal  15
+variable   Tw_B  equal  ${T_WALL}
+variable   Tg    equal  ${T_GAS}
+
+variable   n_insert index 2500      # atoms per insertion
+variable   n_loops  index 1         # number of insertions
+
+variable   createGasFreq equal 200  # steps between insertions
+variable   deleGasFreq   equal 200  # steps between deletion checks
+variable   n_subloops    equal ${createGasFreq}/${deleGasFreq} # deletion checks per insertion
+
+variable   dumpGasFreq  equal 50    # fine enough to resolve the outgoing velocity
+variable   dumpWallFreq equal 1000
+
+variable   ablationThick  equal 5.0 # thickness of the free wall layer [Ang]
+
+variable   n_created equal 0
+variable   n_deleted equal 0
+
+############################################################
+# VELOCITY CALCULATION
+# Convert incident velocity from m/s to LAMMPS real units (Angstrom/fs)
+# 1 m/s = 1e-10 Ang / 1e-15 fs = 1e-5 Ang/fs
+############################################################
+variable  mGas equal 39.948
+variable  refVel   equal   1e-10 / 1e-15      # m/s -> Ang/fs conversion
+variable  refMass  equal   1.66054e-27
+variable  kB       equal   1.38064852e-23
+
+# thermal velocity scale used by the Box-Muller sampling
+variable  Vscale   equal   sqrt(${kB}*${Tg}/(${mGas}*${refMass}))/${refVel}
+variable  MPS      equal   sqrt(2*${kB}*${Tg}/(${mGas}*${refMass}))/${refVel}
+
+variable  v_inc_lmp  equal  ${V_INC}/${refVel}
+
+variable  theta_rad  equal  ${THETA}*PI/180.0
+variable  phi_rad    equal  ${PHI}*PI/180.0
+
+# the beam travels towards -z, so vz_drift is held positive and negated below
+variable  vx_drift equal  ${v_inc_lmp}*sin(${theta_rad})*cos(${phi_rad})
+variable  vy_drift equal  ${v_inc_lmp}*sin(${theta_rad})*sin(${phi_rad})
+variable  vz_drift equal  ${v_inc_lmp}*cos(${theta_rad})
+
+print "Beam conditions:"
+print "  Incident velocity: ${V_INC} m/s"
+print "  Incident angle (theta): ${THETA} deg"
+print "  Azimuthal angle (phi): ${PHI} deg"
+print "  Wall temperature: ${T_WALL} K"
+print "  Gas temperature: ${T_GAS} K"
+print "  vx_drift: ${vx_drift} Ang/fs"
+print "  vy_drift: ${vy_drift} Ang/fs"
+print "  vz_drift: ${vz_drift} Ang/fs"
+
+############################################################ MODE SELECTION
+# wallMode:     1 = whole wall thermostatted, 2 = free surface layer on a
+#               thermostatted base
+# velocityMode: 1 = thermal beam (Box-Muller), 2 = monoenergetic beam
+variable   wallMode      index 1
+variable   velocityMode  index 2
+variable   TAILSTEPS     index 8000   # tail run, set per beam energy
+
+if "${wallMode} == 1" then &
+    "print '# Step n_created n_deleted n_bulk n_wall T_gas T_gas_tang T_wallB' file DataDir/particle_stats.txt screen no" &
+else &
+    "print '# Step n_created n_deleted n_bulk n_wall T_gas T_gas_tang T_ablation T_thermost' file DataDir/particle_stats.txt screen no"
+
+############################################################ INTERACTIONS
+group      GAS              type 1
+group      wallB            type 2
+group      wallrigid        type 3
+
+variable   epsilonGas  equal  0.2313
+variable   sigmaGas    equal  3.3504
+
+variable   epsilonWall equal  15.9743
+variable   sigmaWall   equal  2.4710
+
+variable   epsilonGSI  equal  0.15727
+variable   sigmaGSI    equal  2.94
+
+pair_style   lj/cut ${rCut}
+pair_modify  shift yes mix arithmetic # Lorentz Berthelot rules 1 - 2
+
+#pair_coeff   1 1 ${epsilonGas} ${sigmaGas} ${rCut}
+pair_coeff   1 1 0.0000         ${sigmaGas}   0.1
+
+pair_coeff   2 2 ${epsilonWall} ${sigmaWall}  ${rCut}  # wall-wall
+pair_coeff   3 3 0.0000         ${sigmaWall}  0.1      # fixedWall-fixedWall
+
+pair_coeff   1 2 ${epsilonGSI}  ${sigmaGSI}   ${rCut}  # gas-surface imp
+pair_coeff   1 3 ${epsilonGSI}  ${sigmaGSI}   ${rCut}  # gas-surface imp
+pair_coeff   2 3 ${epsilonWall} ${sigmaWall}  ${rCut}  # same as wall-wall
+
+############################################################ REGION DEFINITIONS
+variable   xlo equal xlo
+variable   xhi equal xhi
+variable   ylo equal ylo
+variable   yhi equal yhi
+variable   zlo equal zlo
+variable   zhi equal zhi
+
+variable   planeThick   equal 1.0
+variable   injectPlane  equal ${zhi}-${planeThick}
+
+region     wall_region  block INF INF INF INF 0               ${rCut}
+region     bulk_region  block INF INF INF INF ${rCut}         ${zhi}
+region     inject_plane block INF INF INF INF ${injectPlane}  ${zhi}
+
+variable   n_bulk  equal count(GAS,bulk_region)
+variable   n_wall  equal count(GAS,wall_region)
+
+# wallMode 2 splits the wall here
+region     ablationRegion block INF INF INF INF -${ablationThick}   0
+region     bulkWallRegion block INF INF INF INF ${zlo}        -${ablationThick}
+
+group      ablationAtoms  region ablationRegion
+group      bulkWallAtoms  region bulkWallRegion
+
+group      ablationWall  intersect wallB ablationAtoms
+group      thermostWall  intersect wallB bulkWallAtoms
+
+############################################################ COMPUTE DEFINITIONS
+compute      dstress  GAS stress/atom NULL
+compute      tempGas  GAS temp
+compute      KE       GAS ke/atom
+compute      PE       GAS pe/atom
+
+# gas temperature from the tangential components only. The normal component is
+# flux-weighted rather than Maxwellian, which makes the full temp too high by 4/3.
+compute      tempGas_tang  GAS temp/partial 1 1 0
+
+compute      tempWallB      wallB         temp
+compute      tempAblation   ablationWall  temp
+compute      tempThermost   thermostWall  temp
+
+############################################################ FIX DEFINITIONS
+if "${wallMode} == 1" then &
+    "fix        1  wallB   nvt temp ${Tw_B} ${Tw_B} $(100.0*dt)" &
+    "fix        2  GAS     nve" &
+    "thermo_style  custom step temp c_tempGas c_tempGas_tang c_tempWallB v_n_created v_n_deleted v_n_bulk v_n_wall" &
+else &
+    "fix        1  ablationWall   nve" &
+    "fix        2  thermostWall   nvt temp ${Tw_B} ${Tw_B} $(100.0*dt)" &
+    "fix        3  GAS            nve" &
+    "thermo_style  custom step temp c_tempGas c_tempGas_tang c_tempAblation c_tempThermost v_n_created v_n_deleted v_n_bulk v_n_wall"
+
+thermo_modify lost ignore flush yes
+thermo        100
+
+############################################################ LOAD BALANCE
+# rebalance along z, where the dense wall meets the dilute gas
+fix        loadbal all balance 1000 1.1 shift z 5 1.1
+
+############################################################ DUMP DATA
+dump         1 GAS custom ${dumpGasFreq} dump_gas.lammpstrj id type x y z vx vy vz
+dump_modify  1 sort id
+
+# wall trajectories are not used by the analysis
+# dump         2 wallB custom ${dumpWallFreq} dump_wall.lammpstrj id type x y z vx vy vz
+# dump_modify  2 sort id
+
+timestep     1.0
+
+############################################################ WALL EQUILIBRATION
+# the wall atoms start at rest, so bring them to T_WALL before any gas is
+# inserted. 10 ps is about 100 Nose-Hoover coupling periods.
+print "Wall equilibration, 10 ps"
+run        10000
+print "Wall equilibration done, T_wallB = $(c_tempWallB) K"
+
+############################################################ TRACKING VARIABLES
+fix        tracker_prop all property/atom i_tracker
+set        atom * i_tracker 0
+
+############################################################
+variable  seed1    equal  12345
+variable  seed2    equal  23456
+variable  seed3    equal  34567
+
+############################################################
+
+variable   loopID loop ${n_loops}
+
+label      insert_loop
+
+    # variable   step equal  ${loopID}*${createGasFreq}
+    variable   seed_U1 equal ${seed1}+$(step)
+    variable   seed_U2 equal ${seed2}+$(step)
+    variable   seed_U3 equal ${seed3}+$(step)
+
+    # Create particles
+    print      "Inserting particles at step $(step)"
+    group      oldGAS type 1
+    create_atoms 1 random ${n_insert} ${seed_U1} inject_plane
+    variable   n_created equal ${n_created}+${n_insert}
+    group      GAS type 1
+    group      newGAS subtract GAS oldGAS
+
+    # Box-Muller Transform
+    fix        newGasPro newGAS property/atom d_theta1 d_rho1 d_rho2
+
+    variable   eps      equal  1e-12
+    variable   theta1   atom   2*PI*random(${eps},1-${eps},${seed_U1})
+    variable   rho1     atom   sqrt(-2*ln(random(${eps},1-${eps},${seed_U2})))
+    variable   rho2     atom  -sqrt(-2*ln(random(${eps},1-${eps},${seed_U3})))
+
+    set        group  newGAS   d_theta1 v_theta1
+    set        group  newGAS   d_rho1   v_rho1
+    set        group  newGAS   d_rho2   v_rho2
+
+    if "${velocityMode} == 1" then &
+        "variable   vx atom d_rho1*cos(d_theta1)*${Vscale} + (${vx_drift})" &
+        "variable   vy atom d_rho1*sin(d_theta1)*${Vscale} + (${vy_drift})" &
+        "variable   vz atom d_rho2*${Vscale}               - (${vz_drift})" &
+    else &
+        "variable   vx atom ${vx_drift}" &
+        "variable   vy atom ${vy_drift}" &
+        "variable   vz atom -${vz_drift}"
+
+    velocity   newGAS set   v_vx v_vy v_vz
+
+    unfix      newGasPro
+
+    set        group newGAS i_tracker 0
+    group      GAS type 1
+
+    variable   delete_loop  loop  ${n_subloops}
+    label      track_update
+
+        # flag the atoms that are inside the near-wall region
+        group      atom_in_wall region wall_region
+        group      scattering intersect GAS atom_in_wall
+
+        set        group scattering i_tracker 1
+
+        group      atom_in_wall delete
+        group      scattering   delete
+
+        run        ${deleGasFreq}
+
+        group      atom_in_bulk region bulk_region
+        variable   scattered atom "(i_tracker==1)*(gmask(atom_in_bulk))"
+
+        group      toDelete variable scattered
+        variable   n_toDelete equal count(toDelete)
+        variable   n_deleted equal ${n_deleted}+${n_toDelete}
+        delete_atoms variable  scattered
+
+        if "${wallMode} == 1" then &
+            "print '$(step) ${n_created} ${n_deleted} ${n_bulk} ${n_wall} $(c_tempGas) $(c_tempGas_tang) $(c_tempWallB)' append DataDir/particle_stats.txt screen no" &
+        else &
+            "print '$(step) ${n_created} ${n_deleted} ${n_bulk} ${n_wall} $(c_tempGas) $(c_tempGas_tang) $(c_tempAblation) $(c_tempThermost)' append DataDir/particle_stats.txt screen no"
+
+        group      atom_in_bulk delete
+        group      toDelete delete
+
+        next       delete_loop
+
+    jump       SELF track_update
+
+    group      oldGAS delete
+    group      newGAS delete
+
+    next       loopID
+jump       SELF insert_loop
+
+# let the in-flight atoms finish scattering and be written to the dump
+print "Tail run for in-flight particles"
+run        ${TAILSTEPS}
+print "Simulation completed"
+print "  V_INC: ${V_INC} m/s, THETA: ${THETA} deg, PHI: ${PHI} deg"
+print "  T_WALL: ${T_WALL} K, T_GAS: ${T_GAS} K"
+print "Total particles created: ${n_created}"
+print "Total particles deleted: ${n_deleted}"
+print "Total particles in bulk: ${n_bulk}"
+print "Total particles in wall region: ${n_wall}"
