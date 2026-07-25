@@ -5,7 +5,8 @@
   "creators": [
     {
       "name": "Chen, Yichong",
-      "affiliation": "Institute of Mechanics, Chinese Academy of Sciences"
+      "affiliation": "Institute of Mechanics, Chinese Academy of Sciences",
+      "orcid": "0000-0002-2522-3839"
     }
   ],
   "description": "<p>Tools for simulating, calibrating and applying gas-surface scattering kernels.</p><p>The molecular dynamics side prepares rough, layered and physisorbing walls, runs LAMMPS scattering simulations and post-processes the trajectories into accommodation coefficients and kernel statistics. The DSMC side provides three <code>surf_collide</code> styles for SPARTA that take the reflection law from molecular dynamics rather than from a fixed accommodation coefficient: <code>cll/md</code>, with the coefficients resolved in incident energy and angle, <code>cll/md/trap</code>, which adds an explicit trapping branch, and <code>dvsm/md</code>, which resamples the scattering events directly. Also included are the Ar-Pt coefficient and trapping tables, the resampling event library, the two-dimensional cylinder and flat-plate input decks with their case generator and post-processing, and the LAMMPS molecular beam runs that produced the tables.</p>",
