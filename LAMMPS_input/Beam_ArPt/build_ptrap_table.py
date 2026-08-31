@@ -37,7 +37,7 @@ TABLES_DIR = os.path.normpath(os.path.join(
 NAMES = {"extrap": "ptrap_arpt_table.txt", "hold": "ptrap_arpt_table_hold.txt"}
 
 
-def read_calibration(path: str) -> dict:
+def read_calibration(path):
     """read the CSV into {(eps,theta): N_return} and check the 5x5 grid is complete"""
     data = {}
     with open(path, newline="") as f:
@@ -50,12 +50,12 @@ def read_calibration(path: str) -> dict:
     return data
 
 
-def build_grid(data: dict) -> list:
+def build_grid(data):
     """p_trap on the 25 measured points as a 5x5 nested list [ie][it]"""
     return [[1.0 - data[(e, t)] / N_INSERT for t in TH_MEAS] for e in EPS_MEAS]
 
 
-def pad_table(rows: list, grazing: str) -> list:
+def pad_table(rows, grazing):
     """5x5 -> 6x7 with the 0.05 eV row, the 0 deg column and the 90 deg column"""
     out = []
     for r in [rows[0]] + rows:
@@ -68,8 +68,7 @@ def pad_table(rows: list, grazing: str) -> list:
     return out
 
 
-def write_table(path: str, eps_grid: list, th_grid: list, pt: list,
-                grazing: str, src: str) -> None:
+def write_table(path, eps_grid, th_grid, pt, grazing, src):
     n_e, n_t = len(eps_grid), len(th_grid)
     with open(path, "w") as f:
         f.write(f"# {os.path.basename(path)}: Ar-Pt trapping probability "
@@ -87,7 +86,7 @@ def write_table(path: str, eps_grid: list, th_grid: list, pt: list,
             f.write(" ".join(f"{v:.6f}" for v in r) + "\n")
 
 
-def verify_tokens(path: str, n_e: int, n_t: int) -> None:
+def verify_tokens(path, n_e, n_t):
     """read the table the way cll/md/trap does: 2 + n_e + n_t + n_e*n_t tokens in [0,1]"""
     tokens = []
     with open(path) as f:
@@ -103,7 +102,7 @@ def verify_tokens(path: str, n_e: int, n_t: int) -> None:
     assert all(0.0 <= v <= 1.0 for v in vals), f"{path}: p_trap outside [0,1]"
 
 
-def main() -> None:
+def main():
     ap = argparse.ArgumentParser()
     here = os.path.dirname(os.path.abspath(__file__))
     ap.add_argument("--csv", default=os.path.join(here, "calibration_curve_ArPt.csv"))

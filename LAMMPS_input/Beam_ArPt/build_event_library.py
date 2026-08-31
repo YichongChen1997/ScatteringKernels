@@ -30,12 +30,12 @@ INSTALL_PATH = os.path.join(
     HERE, "..", "..", "SPARTA_input", "events", "dvsm_events.txt")
 
 
-def dirname_for(eps: float, th: int) -> str:
+def dirname_for(eps, th):
     eps_s = str(int(eps)) if eps == int(eps) else str(eps)
     return os.path.join(HERE, "runs", f"eps{eps_s}_th{th}")
 
 
-def read_events(rdir: str) -> list[tuple[float, float, float]]:
+def read_events(rdir):
     path = os.path.join(rdir, "events_out.csv")
     if not os.path.exists(path):
         sys.exit(f"FATAL: missing {path}")
@@ -55,7 +55,7 @@ def read_events(rdir: str) -> list[tuple[float, float, float]]:
     return rows
 
 
-def main() -> None:
+def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--install", action="store_true")
     args = ap.parse_args()

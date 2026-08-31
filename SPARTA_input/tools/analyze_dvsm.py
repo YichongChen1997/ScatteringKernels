@@ -36,7 +36,7 @@ OBS = {"cyl": ["CD", "q"], "plate": ["CD", "Cm"]}
 KNS = ["0.1", "1", "10"]
 
 
-def reps(case: str) -> list:
+def reps(case):
     dirs = [f"{HERE}/runs/{case}"] + \
            [f"{HERE}/runs_ver/rep_{case}_s{i}" for i in (2, 3, 4)]
     nrho = nrho_of(case)
@@ -47,7 +47,7 @@ def reps(case: str) -> list:
     return out
 
 
-def main() -> None:
+def main():
     lines = ["geom\tkn\tobs\tdiffuse\tcllmd\tdvsm"
              "\tDfull_pct\tDfull_ci\tDcoeff_pct\tDcoeff_ci"
              "\tDshape_pct\tDshape_ci\tDshapepts_pct\tDshapepts_ci"
