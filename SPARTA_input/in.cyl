@@ -14,7 +14,7 @@
 #   cllmd      CLL with alpha_n, alpha_t looked up per collision in ALPHATABLE
 #   cllmdtrap  cllmd plus an explicit trapping-desorption branch, PTRAPTABLE
 #   dvsm       resampling of the MD event library, which is passed through
-#              ALPHATABLE, e.g. -var ALPHATABLE events/dvsm_events.txt
+#              ALPHATABLE, e.g. -var ALPHATABLE ../../events/dvsm_events.txt
 #
 # Other variables that can be set on the command line: SEED, SIGMA, ALPHAT,
 # ALPHAN, NRHO, UINF, TINF, TWALL, NPC, NX, NY, DT, NUNSTEADY, NSTEADY.

@@ -45,6 +45,7 @@ BCS = {
 NP_MPI = 4
 SPA = "${SPARTA_BIN:-spa_mpi}"
 BASE_SEED = 12345
+REP_SEEDS = {2: 67891, 3: 24680, 4: 13579}   # replicate seeds used for the CIs
 
 
 def write_case(rdir, deck, nrho, bcargs, seed=None):
@@ -77,7 +78,7 @@ def main():
                 for i in range(2, a.seeds + 1):
                     rep = f"rep_{name}_s{i}"
                     write_case(os.path.join(HERE, "runs_ver", rep), deck, nrho, bcargs,
-                               seed=BASE_SEED + i)
+                               seed=REP_SEEDS.get(i, BASE_SEED + i))
                     manifest.append(f"{rep}\t{geom}\t{kn:g}\t{nrho:.6g}\t{bc}\truns_ver/{rep}")
 
     with open(os.path.join(HERE, "runs", "manifest.tsv"), "w") as f:

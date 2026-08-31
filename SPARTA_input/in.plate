@@ -10,7 +10,8 @@
 #   runs/plate_kn1_cllmd_extrap/cmd.sh
 #
 # Wall-model branches (WALLMODEL = diffuse, cll, cllmd, cllmdtrap, dvsm) and the
-# command-line variables are the same as in in.cyl.
+# command-line variables are the same as in in.cyl. For dvsm the event library
+# is passed through ALPHATABLE, e.g. -var ALPHATABLE ../../events/dvsm_events.txt.
 #
 # The pitching moment is not computed here. tools/analyze.py takes moments about
 # the reference point from the per-facet dump.

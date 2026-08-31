@@ -213,9 +213,9 @@ fix        tracker_prop all property/atom i_tracker
 set        atom * i_tracker 0
 
 ############################################################
-variable  seed1    equal  12345
-variable  seed2    equal  23456
-variable  seed3    equal  34567
+variable  seed1    index  12345
+variable  seed2    index  23456
+variable  seed3    index  34567
 
 ############################################################
 

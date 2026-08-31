@@ -34,7 +34,7 @@ direction is +x.
 `in.beam` reads `../../ArPt_slab.data`, so it expects one directory per condition
 under `runs/`. The slab file is in this directory: 169744 atoms, type 1 for the
 gas, 2 for the thermostatted wall and 3 for the fixed layer. A different wall can
-be built with the tools in `../../../initialisation/TypeOfWalls`.
+be built with the tools in `../../initialisation/TypeOfWalls`.
 
 Name each directory `runs/eps<E>_th<theta>`, since the post-processing reads the
 energy and angle back out of the directory name:

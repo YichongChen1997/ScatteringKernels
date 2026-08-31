@@ -50,7 +50,7 @@ law to direct use of the MD data:
 | `dvsm`      | direct resampling of the MD event library               | `ALPHATABLE`           |
 
 `dvsm` passes the event library through `ALPHATABLE`, so use
-`-var ALPHATABLE events/dvsm_events.txt`.
+`-var ALPHATABLE ../../events/dvsm_events.txt`.
 
 The supplied Ar-Pt data are in `tables/` and `events/`. Each table comes in two
 variants, `_table.txt` and `_table_hold.txt`, which differ only at grazing
@@ -72,8 +72,9 @@ check that `cll/md` with a constant table reproduces the native `cll` statistics
 The replicates come from `gen_runs.py --seeds 4`. The refined and degeneracy runs
 are not generated: copy a `cmd.sh` into `runs_ver/conv_<geom>_kn1_cllmd_dt2`,
 `..._npc2` and `runs_ver/degen_<geom>_kn1_cllmdconst`, and add `-var DT 5e-8`,
-`-var NPC 40` or a constant accommodation table respectively. Writes
-`runs_ver/ci_summary.tsv`.
+`-var NPC 40` or a constant accommodation table (all entries `alpha_t` = 0.87,
+`alpha_n` = 0.70, matching the `cll_hi` case it is compared against) respectively.
+Writes `runs_ver/ci_summary.tsv`.
 
 `tools/analyze_dvsm.py` separates the effect of the energy-resolved coefficients
 from the shape of the kernel, by comparing the separable CLL fit against the
