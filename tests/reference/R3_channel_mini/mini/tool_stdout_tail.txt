@@ -1,0 +1,101 @@
+==== pp_meas_ACs (last 4 stdout lines) ====
+Number of Collisions Ended: 54
+
+No. of Collisions at top: 0
+No. of Collisions at bottom: 54
+==== pp_meas_AngularF (last 4 stdout lines) ====
+Size of vN: 54
+No. of Collisions at top: 0
+No. of Collisions at bottom: 54
+Number of molecules for the full range angle: 54
+==== pp_meas_AngularP (last 4 stdout lines) ====
+No. of molecules between the incident angle range 28 and 32 are: 5
+No. of molecules between the incident angle range 43 and 47 are: 2
+No. of molecules between the incident angle range 58 and 62 are: 4
+No. of molecules between the incident angle range 73 and 77 are: 1
+==== pp_meas_Bins (last 4 stdout lines) ====
+currentTimeStep = 65400; t = 77 [ 97.5% ]
+currentTimeStep = 65600; t = 78 [ 98.75% ]
+currentTimeStep = 65800; t = 79 [ 100% ]
+bin measurements
+==== pp_meas_Collisions (last 4 stdout lines) ====
+No. of Collisions at top: 0
+No. of Collisions at bottom: 54
+Collision Distribution Finished
+Analysis Ended
+==== pp_meas_Contours (last 4 stdout lines) ====
+currentTimeStep = 65200; t = 76 [ 96.25% ]
+currentTimeStep = 65400; t = 77 [ 97.5% ]
+currentTimeStep = 65600; t = 78 [ 98.75% ]
+currentTimeStep = 65800; t = 79 [ 100% ]
+==== pp_meas_Correlation (last 4 stdout lines) ====
+Number of Collisions Ended: 54
+
+No. of Collisions at top: 0
+No. of Collisions at bottom: 54
+==== pp_meas_Displacement (last 4 stdout lines) ====
+Size of xIn: 54
+Size of space vector: 54
+No. of Collisions at top: 0
+No. of Collisions at bottom: 54
+==== pp_meas_FAngular (last 4 stdout lines) ====
+Size of vN: 54
+No. of Collisions at top: 0
+No. of Collisions at bottom: 54
+Number of molecules for the full range angle: 54
+==== pp_meas_GasOverTime (last 4 stdout lines) ====
+currentTimeStep = 65200; t = 76 [ 96.25% ]
+currentTimeStep = 65400; t = 77 [ 97.5% ]
+currentTimeStep = 65600; t = 78 [ 98.75% ]
+currentTimeStep = 65800; t = 79 [ 100% ]
+==== pp_meas_NearWall (last 4 stdout lines) ====
+currentTimeStep = 65400; t = 77 [ 97.5% ]
+currentTimeStep = 65600; t = 78 [ 98.75% ]
+currentTimeStep = 65800; t = 79 [ 100% ]
+Create xyz dump file
+==== pp_meas_PAngular (last 4 stdout lines) ====
+No. of molecules between the incident angle range 28 and 32 are: 5
+No. of molecules between the incident angle range 43 and 47 are: 2
+No. of molecules between the incident angle range 58 and 62 are: 4
+No. of molecules between the incident angle range 73 and 77 are: 1
+==== pp_meas_ResidenceTime (last 4 stdout lines) ====
+Size of tOut: 54
+No. of Collisions at top: 0
+No. of Collisions at bottom: 54
+Maximum abosorped time = 1.24e-11
+==== pp_meas_Traj (last 4 stdout lines) ====
+currentTimeStep = 65400; t = 77 [ 97.5% ]
+currentTimeStep = 65600; t = 78 [ 98.75% ]
+currentTimeStep = 65800; t = 79 [ 100% ]
+Create ovito dump file
+==== pp_meas_VDFF (last 4 stdout lines) ====
+Maximum vTxi value = 571.202
+Minimum vTxi value = -692.535
+Maximum vTx value = 544.781
+Minimum vTx value = -723.091
+==== pp_meas_VDFPi (last 4 stdout lines) ====
+No. molecules within Tangential velocity range 1.6 and 1.8 are: 1
+No. molecules within Tangential velocity range 1.7 and 1.9 are: 0
+No. molecules within Tangential velocity range 1.8 and 2 are: 0
+No. molecules within Tangential velocity range 1.9 and 2.1 are: 0
+==== pp_meas_VDFPr (last 4 stdout lines) ====
+No. molecules within Tangential velocity range 1.6 and 1.8 are: 1
+No. molecules within Tangential velocity range 1.7 and 1.9 are: 0
+No. molecules within Tangential velocity range 1.8 and 2 are: 0
+No. molecules within Tangential velocity range 1.9 and 2.1 are: 0
+==== pp_meas_penACs (last 4 stdout lines) ====
+Analysis Starts: 
+Number of Collisions Started: 137
+Number of Collisions Ended: 54
+
+==== pp_meas_penBeam (last 4 stdout lines) ====
+Analysis Starts: 
+Number of Collisions Started: 137
+Number of Collisions Ended: 54
+
+==== pp_meas_penOverall (last 4 stdout lines) ====
+Analysis Starts: 
+Number of Collisions Started: 137
+Number of Collisions Ended: 54
+
+==== pp_meas_wallTemp (last 4 stdout lines) ====

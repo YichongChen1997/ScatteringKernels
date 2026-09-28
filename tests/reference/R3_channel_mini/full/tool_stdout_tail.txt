@@ -1,0 +1,105 @@
+==== pp_meas_ACs (last 4 stdout lines) ====
+Number of Collisions Ended: 1869
+
+No. of Collisions at top: 0
+No. of Collisions at bottom: 1869
+==== pp_meas_AngularF (last 4 stdout lines) ====
+Size of vN: 1869
+No. of Collisions at top: 0
+No. of Collisions at bottom: 1869
+Number of molecules for the full range angle: 1869
+==== pp_meas_AngularP (last 4 stdout lines) ====
+No. of molecules between the incident angle range 28 and 32 are: 136
+No. of molecules between the incident angle range 43 and 47 are: 127
+No. of molecules between the incident angle range 58 and 62 are: 128
+No. of molecules between the incident angle range 73 and 77 are: 58
+==== pp_meas_Bins (last 4 stdout lines) ====
+currentTimeStep = 274200; t = 1121 [ 97.4805% ]
+currentTimeStep = 276400; t = 1132 [ 98.4361% ]
+currentTimeStep = 278600; t = 1143 [ 99.3918% ]
+bin measurements
+==== pp_meas_Collisions (last 4 stdout lines) ====
+No. of Collisions at top: 0
+No. of Collisions at bottom: 1869
+Collision Distribution Finished
+Analysis Ended
+==== pp_meas_Contours (last 4 stdout lines) ====
+currentTimeStep = 279400; t = 1147 [ 99.7394% ]
+currentTimeStep = 279600; t = 1148 [ 99.8262% ]
+currentTimeStep = 279800; t = 1149 [ 99.9131% ]
+currentTimeStep = 280000; t = 1150 [ 100% ]
+==== pp_meas_Correlation (last 4 stdout lines) ====
+Number of Collisions Ended: 1869
+
+No. of Collisions at top: 0
+No. of Collisions at bottom: 1869
+==== pp_meas_Displacement (last 4 stdout lines) ====
+Size of xIn: 1869
+Size of space vector: 1869
+No. of Collisions at top: 0
+No. of Collisions at bottom: 1869
+==== pp_meas_FAngular (last 4 stdout lines) ====
+Size of vN: 1869
+No. of Collisions at top: 0
+No. of Collisions at bottom: 1869
+Number of molecules for the full range angle: 1869
+==== pp_meas_GasOverTime (last 4 stdout lines) ====
+currentTimeStep = 272000; t = 1110 [ 96.5248% ]
+currentTimeStep = 274200; t = 1121 [ 97.4805% ]
+currentTimeStep = 276400; t = 1132 [ 98.4361% ]
+currentTimeStep = 278600; t = 1143 [ 99.3918% ]
+==== pp_meas_NearWall (last 4 stdout lines) ====
+currentTimeStep = 279600; t = 1148 [ 99.8262% ]
+currentTimeStep = 279800; t = 1149 [ 99.9131% ]
+currentTimeStep = 280000; t = 1150 [ 100% ]
+Create xyz dump file
+==== pp_meas_PAngular (last 4 stdout lines) ====
+No. of molecules between the incident angle range 28 and 32 are: 136
+No. of molecules between the incident angle range 43 and 47 are: 127
+No. of molecules between the incident angle range 58 and 62 are: 128
+No. of molecules between the incident angle range 73 and 77 are: 58
+==== pp_meas_ResidenceTime (last 4 stdout lines) ====
+Size of tOut: 1869
+No. of Collisions at top: 0
+No. of Collisions at bottom: 1869
+Maximum abosorped time = 1.636e-10
+==== pp_meas_Traj (last 4 stdout lines) ====
+currentTimeStep = 279600; t = 1148 [ 99.8262% ]
+currentTimeStep = 279800; t = 1149 [ 99.9131% ]
+currentTimeStep = 280000; t = 1150 [ 100% ]
+Create ovito dump file
+==== pp_meas_VDFF (last 4 stdout lines) ====
+Maximum vTxi value = 820.703
+Minimum vTxi value = -882.018
+Maximum vTx value = 891.915
+Minimum vTx value = -836.172
+==== pp_meas_VDFPi (last 4 stdout lines) ====
+No. molecules within Tangential velocity range 1.6 and 1.8 are: 9
+No. molecules within Tangential velocity range 1.7 and 1.9 are: 6
+No. molecules within Tangential velocity range 1.8 and 2 are: 6
+No. molecules within Tangential velocity range 1.9 and 2.1 are: 5
+==== pp_meas_VDFPr (last 4 stdout lines) ====
+No. molecules within Tangential velocity range 1.6 and 1.8 are: 9
+No. molecules within Tangential velocity range 1.7 and 1.9 are: 6
+No. molecules within Tangential velocity range 1.8 and 2 are: 6
+No. molecules within Tangential velocity range 1.9 and 2.1 are: 5
+==== pp_meas_penACs (last 4 stdout lines) ====
+Analysis Starts: 
+Number of Collisions Started: 1981
+Number of Collisions Ended: 1869
+
+==== pp_meas_penBeam (last 4 stdout lines) ====
+Analysis Starts: 
+Number of Collisions Started: 1981
+Number of Collisions Ended: 1869
+
+==== pp_meas_penOverall (last 4 stdout lines) ====
+Analysis Starts: 
+Number of Collisions Started: 1981
+Number of Collisions Ended: 1869
+
+==== pp_meas_wallTemp (last 4 stdout lines) ====
+currentTimeStep = 200000; t = 7 [ 72.7273% ]
+currentTimeStep = 200000; t = 8 [ 81.8182% ]
+currentTimeStep = 200000; t = 9 [ 90.9091% ]
+currentTimeStep = 200000; t = 10 [ 100% ]

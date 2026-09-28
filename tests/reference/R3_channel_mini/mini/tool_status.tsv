@@ -1,0 +1,22 @@
+tool	exit_code	wall_s	max_rss_MB	note
+pp_meas_ACs	0	0.26	2	ok
+pp_meas_AngularF	0	0.26	2	ok
+pp_meas_AngularP	0	0.26	2	ok
+pp_meas_Bins	0	0.27	2	ok
+pp_meas_Collisions	0	0.26	2	ok
+pp_meas_Contours	0	43.93	4214	ok
+pp_meas_Correlation	0	0.26	2	ok
+pp_meas_Displacement	0	0.26	2	ok
+pp_meas_FAngular	0	0.26	2	ok
+pp_meas_GasOverTime	0	0.26	1	ok
+pp_meas_NearWall	0	0.26	2	ok
+pp_meas_PAngular	0	0.26	2	ok
+pp_meas_ResidenceTime	0	0.26	2	ok
+pp_meas_Traj	139	0.27	1	signal 11
+pp_meas_VDFF	0	0.26	2	ok
+pp_meas_VDFPi	0	0.27	2	ok
+pp_meas_VDFPr	0	0.26	2	ok
+pp_meas_penACs	0	0.26	2	ok
+pp_meas_penBeam	0	0.27	2	ok
+pp_meas_penOverall	0	0.26	2	ok
+pp_meas_wallTemp	0	0.26	1	ok

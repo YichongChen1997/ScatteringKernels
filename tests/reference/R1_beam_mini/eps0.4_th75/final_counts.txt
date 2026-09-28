@@ -1,0 +1,4 @@
+Total particles created: 500
+Total particles deleted: 0
+Total particles in bulk: 0
+Total particles in wall region: 500

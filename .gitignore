@@ -20,3 +20,7 @@ LAMMPS_input/Beam_ArPt/__pycache__/
 
 # never commit virtual environments
 initialisation/SurfGenerator/myenv/
+
+# reference answers are small text files and are meant to be tracked
+!tests/reference/**
+tests/**/__pycache__/

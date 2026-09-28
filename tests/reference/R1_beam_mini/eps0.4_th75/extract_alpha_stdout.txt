@@ -1,0 +1,2 @@
+[trap-limit] eps0.4_th75: N_return=0 < 30 (trapping fraction ~ 1.000) -> alpha_t=alpha_n=eac=1.0
+{'eps': 0.4, 'theta': 75, 'alpha_t': 1.0, 'alpha_n': 1.0, 'eac': 1.0, 'err_t': 0.0, 'err_n': 0.0, 'events': 0}

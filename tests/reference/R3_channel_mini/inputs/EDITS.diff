@@ -1,0 +1,31 @@
+### diff v2.0.0:initialisation/TypeOfWalls/Explicit_layered/Parameters.dat inputs/Parameters.dat
+1,2c1,2
+< 0    200          # xLo,  xHi
+< 0    200          # yLo,  yHi 
+---
+> 0    40           # xLo,  xHi
+> 0    40           # yLo,  yHi 
+### diff v2.0.0:LAMMPS_input/Explicit_layered/in.equil inputs/in.equil
+16c16
+< processors      8 8 2
+---
+> processors      * * *
+106c106
+< run             100000 every 100000 "write_restart restart.*"
+---
+> run             50000 every 50000 "write_restart restart.*"
+### diff v2.0.0:LAMMPS_input/Explicit_layered/in.meas inputs/in.meas
+16c16
+< processors      8 8 2
+---
+> processors      * * *
+51,52c51,52
+< pair_coeff   1 1 ${epsilonGas}   ${sigmaGas}   ${rCut}
+< #pair_coeff   1 1 0.0000 ${sigmaGas} 0.1
+---
+> #pair_coeff   1 1 ${epsilonGas}   ${sigmaGas}   ${rCut}
+> pair_coeff   1 1 0.0000 ${sigmaGas} 0.1
+106c106
+< run             6000000 every 6000000 "write_restart restart.*"
+---
+> run             230000 every 230000 "write_restart restart.*"
