@@ -1,0 +1,12 @@
+-11 nan nan
+-9 nan nan
+-7 nan nan
+-5 nan nan
+-3 nan nan
+-1 nan nan
+1 0.314755 0.689268
+3 1.05147 0.676286
+5 nan nan
+7 nan nan
+9 nan nan
+11 nan nan

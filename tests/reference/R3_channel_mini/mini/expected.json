@@ -1,0 +1,5 @@
+{
+  "frames": 80,
+  "collisions": {"started": 137, "ended": 54, "bottom": 54, "top": 0},
+  "accommodation_coefficients_bottom_wall": {"TMAC": {"general": 0.255223, "least_squares": 0.345685}, "NMAC": {"general": -0.0978494, "least_squares": 0.787898}, "NEAC": {"general": 0.129661, "least_squares": 0.690521}, "EAC": {"general": 0.390451, "least_squares": 0.32804}, "TEAC_x": {"general": 0.427951, "least_squares": 0.216219}}
+}

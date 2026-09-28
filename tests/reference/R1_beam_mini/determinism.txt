@@ -1,0 +1,4 @@
+# eps1_th30 dump, serial, fresh tree each: sha256 size_bytes frames
+run1 80ceda2a1cb7287c9bb236610864010e0ffd9a2ce3bcf50155795ee9e0e70633 5526107 525
+run2 80ceda2a1cb7287c9bb236610864010e0ffd9a2ce3bcf50155795ee9e0e70633 5526107 525
+IDENTICAL

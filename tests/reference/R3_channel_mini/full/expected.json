@@ -1,0 +1,12 @@
+{
+  "case": "R3_channel_mini",
+  "source": "tag v2.0.0 (e4ad3ce737b2b0c60e890071f17c87be6479079d)",
+  "np": 4,
+  "frames": 1151,
+  "sha256": {"data.dat": "5beb62ff3ceec51742597aa0867a4d67699bac0766e2555d0b10327772da8b9f", "dump_meas_gas.lammpstrj": "671231ee51353d8bd5125f92a704a14eb2e64d51ff80cb5770d5bfcc951fd69b", "dump_meas_wall.lammpstrj": "b01b2b43a77e585189feb537622aadf0bf97ed4f3059f84e35385e07cebf148c"},
+  "dump_bytes": {"dump_meas_gas.lammpstrj": 43718663, "dump_meas_wall.lammpstrj": 195155},
+  "collisions": {"started": 1981, "ended": 1869, "bottom": 1869, "top": 0},
+  "accommodation_coefficients_bottom_wall": {"TMAC": {"general": 0.535549, "least_squares": 0.495551}, "NMAC": {"general": 0.378085, "least_squares": 0.670302}, "NEAC": {"general": 0.345013, "least_squares": 0.648138}, "EAC": {"general": 0.156304, "least_squares": 0.264906}, "TEAC_x": {"general": 0.289702, "least_squares": 0.569353}},
+  "ac_columns": "Alpha*.txt row 1: column 4 = general formula (eq. 3.6), column 5 = least squares (eq. 3.7), both over all collisions",
+  "thesis_fig_3_4": {"TMAC": 0.49, "NMAC": 0.67, "NEAC": 0.63, "EAC": 0.26}
+}

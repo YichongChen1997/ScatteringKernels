@@ -1,0 +1,1 @@
+cd LAMMPS_input/Beam_ArPt/runs/eps0.4_th75 && lmp -in ../../in.beam -var V_INC 1390 -var THETA 75 -var PHI 0 -var T_WALL 300 -var T_GAS 300 -var n_insert 500 -var n_loops 1 -var TAILSTEPS 16000

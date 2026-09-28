@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "deck": "LAMMPS_input/Beam_ArPt/in.beam (v2.0.0, unchanged)",
+    "analysis": "LAMMPS_input/Beam_ArPt/extract_alpha.py (v2.0.0, unchanged)",
+    "slab_sha256": "5f3816fcb365f231151f72dc16fd908cc9d0e09fd9e276b0824fc713df4b2d8b",
+    "np": "1"
+  },
+  "conditions": {
+    "eps1_th30": {
+      "alpha_t": 0.4645970908690389,
+      "alpha_n": 0.7392137780527755,
+      "eac": 0.5915361436985035,
+      "err_t": 0.02659506482459525,
+      "err_n": 0.0096478410082793,
+      "events": 495,
+      "eps": 1.0,
+      "theta": 30,
+      "V_INC": 2198,
+      "THETA": 30,
+      "PHI": 0,
+      "T_WALL": 300,
+      "n_insert": 500,
+      "n_loops": 1,
+      "TAILSTEPS": 16000
+    },
+    "eps1_th45": {
+      "alpha_t": 0.3342793566565566,
+      "alpha_n": 0.5597152368951678,
+      "eac": 0.46595752603573304,
+      "err_t": 0.01655753161314125,
+      "err_n": 0.016737980850581383,
+      "events": 493,
+      "eps": 1.0,
+      "theta": 45,
+      "V_INC": 2198,
+      "THETA": 45,
+      "PHI": 0,
+      "T_WALL": 300,
+      "n_insert": 500,
+      "n_loops": 1,
+      "TAILSTEPS": 16000
+    },
+    "eps0.4_th75": {
+      "alpha_t": 1.0,
+      "alpha_n": 1.0,
+      "eac": 1.0,
+      "err_t": 0.0,
+      "err_n": 0.0,
+      "events": 0,
+      "eps": 0.4,
+      "theta": 75,
+      "V_INC": 1390,
+      "THETA": 75,
+      "PHI": 0,
+      "T_WALL": 300,
+      "n_insert": 500,
+      "n_loops": 1,
+      "TAILSTEPS": 12000
+    },
+    "eps0.4_th75_tail16000": {
+      "alpha_t": 0.2188604447098378,
+      "alpha_n": -111.67368919661793,
+      "eac": 0.08073012917884737,
+      "err_t": 0.007610072830848822,
+      "err_n": 5.157782809069908,
+      "events": 268,
+      "eps": 0.4,
+      "theta": 75,
+      "V_INC": 1390,
+      "THETA": 75,
+      "PHI": 0,
+      "T_WALL": 300,
+      "n_insert": 500,
+      "n_loops": 1,
+      "TAILSTEPS": 16000
+    }
+  }
+}

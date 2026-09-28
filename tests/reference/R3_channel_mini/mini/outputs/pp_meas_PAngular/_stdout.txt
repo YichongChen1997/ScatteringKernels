@@ -1,0 +1,252 @@
+currentTimeStep = 50000; t = 0 [ 1.25% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 50200; t = 1 [ 2.5% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 50400; t = 2 [ 3.75% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 50600; t = 3 [ 5% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 50800; t = 4 [ 6.25% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 51000; t = 5 [ 7.5% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 51200; t = 6 [ 8.75% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 51400; t = 7 [ 10% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 51600; t = 8 [ 11.25% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 51800; t = 9 [ 12.5% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 52000; t = 10 [ 13.75% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 52200; t = 11 [ 15% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 52400; t = 12 [ 16.25% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 52600; t = 13 [ 17.5% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 52800; t = 14 [ 18.75% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 53000; t = 15 [ 20% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 53200; t = 16 [ 21.25% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 53400; t = 17 [ 22.5% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 53600; t = 18 [ 23.75% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 53800; t = 19 [ 25% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 54000; t = 20 [ 26.25% ]
+number of gas-wall collisions = 0
+
+currentTimeStep = 54200; t = 21 [ 27.5% ]
+number of gas-wall collisions = 1
+
+currentTimeStep = 54400; t = 22 [ 28.75% ]
+number of gas-wall collisions = 1
+
+currentTimeStep = 54600; t = 23 [ 30% ]
+number of gas-wall collisions = 1
+
+currentTimeStep = 54800; t = 24 [ 31.25% ]
+number of gas-wall collisions = 1
+
+currentTimeStep = 55000; t = 25 [ 32.5% ]
+number of gas-wall collisions = 1
+
+currentTimeStep = 55200; t = 26 [ 33.75% ]
+number of gas-wall collisions = 1
+
+currentTimeStep = 55400; t = 27 [ 35% ]
+number of gas-wall collisions = 2
+
+currentTimeStep = 55600; t = 28 [ 36.25% ]
+number of gas-wall collisions = 3
+
+currentTimeStep = 55800; t = 29 [ 37.5% ]
+number of gas-wall collisions = 3
+
+currentTimeStep = 56000; t = 30 [ 38.75% ]
+number of gas-wall collisions = 4
+
+currentTimeStep = 56200; t = 31 [ 40% ]
+number of gas-wall collisions = 4
+
+currentTimeStep = 56400; t = 32 [ 41.25% ]
+number of gas-wall collisions = 4
+
+currentTimeStep = 56600; t = 33 [ 42.5% ]
+number of gas-wall collisions = 4
+
+currentTimeStep = 56800; t = 34 [ 43.75% ]
+number of gas-wall collisions = 5
+
+currentTimeStep = 57000; t = 35 [ 45% ]
+number of gas-wall collisions = 8
+
+currentTimeStep = 57200; t = 36 [ 46.25% ]
+number of gas-wall collisions = 8
+
+currentTimeStep = 57400; t = 37 [ 47.5% ]
+number of gas-wall collisions = 9
+
+currentTimeStep = 57600; t = 38 [ 48.75% ]
+number of gas-wall collisions = 12
+
+currentTimeStep = 57800; t = 39 [ 50% ]
+number of gas-wall collisions = 12
+
+currentTimeStep = 58000; t = 40 [ 51.25% ]
+number of gas-wall collisions = 12
+
+currentTimeStep = 58200; t = 41 [ 52.5% ]
+number of gas-wall collisions = 12
+
+currentTimeStep = 58400; t = 42 [ 53.75% ]
+number of gas-wall collisions = 12
+
+currentTimeStep = 58600; t = 43 [ 55% ]
+number of gas-wall collisions = 14
+
+currentTimeStep = 58800; t = 44 [ 56.25% ]
+number of gas-wall collisions = 15
+
+currentTimeStep = 59000; t = 45 [ 57.5% ]
+number of gas-wall collisions = 15
+
+currentTimeStep = 59200; t = 46 [ 58.75% ]
+number of gas-wall collisions = 15
+
+currentTimeStep = 59400; t = 47 [ 60% ]
+number of gas-wall collisions = 18
+
+currentTimeStep = 59600; t = 48 [ 61.25% ]
+number of gas-wall collisions = 18
+
+currentTimeStep = 59800; t = 49 [ 62.5% ]
+number of gas-wall collisions = 19
+
+currentTimeStep = 60000; t = 50 [ 63.75% ]
+number of gas-wall collisions = 20
+
+currentTimeStep = 60200; t = 51 [ 65% ]
+number of gas-wall collisions = 21
+
+currentTimeStep = 60400; t = 52 [ 66.25% ]
+number of gas-wall collisions = 21
+
+currentTimeStep = 60600; t = 53 [ 67.5% ]
+number of gas-wall collisions = 21
+
+currentTimeStep = 60800; t = 54 [ 68.75% ]
+number of gas-wall collisions = 22
+
+currentTimeStep = 61000; t = 55 [ 70% ]
+number of gas-wall collisions = 23
+
+currentTimeStep = 61200; t = 56 [ 71.25% ]
+number of gas-wall collisions = 23
+
+currentTimeStep = 61400; t = 57 [ 72.5% ]
+number of gas-wall collisions = 23
+
+currentTimeStep = 61600; t = 58 [ 73.75% ]
+number of gas-wall collisions = 25
+
+currentTimeStep = 61800; t = 59 [ 75% ]
+number of gas-wall collisions = 27
+
+currentTimeStep = 62000; t = 60 [ 76.25% ]
+number of gas-wall collisions = 28
+
+currentTimeStep = 62200; t = 61 [ 77.5% ]
+number of gas-wall collisions = 29
+
+currentTimeStep = 62400; t = 62 [ 78.75% ]
+number of gas-wall collisions = 31
+
+currentTimeStep = 62600; t = 63 [ 80% ]
+number of gas-wall collisions = 31
+
+currentTimeStep = 62800; t = 64 [ 81.25% ]
+number of gas-wall collisions = 32
+
+currentTimeStep = 63000; t = 65 [ 82.5% ]
+number of gas-wall collisions = 33
+
+currentTimeStep = 63200; t = 66 [ 83.75% ]
+number of gas-wall collisions = 35
+
+currentTimeStep = 63400; t = 67 [ 85% ]
+number of gas-wall collisions = 37
+
+currentTimeStep = 63600; t = 68 [ 86.25% ]
+number of gas-wall collisions = 38
+
+currentTimeStep = 63800; t = 69 [ 87.5% ]
+number of gas-wall collisions = 39
+
+currentTimeStep = 64000; t = 70 [ 88.75% ]
+number of gas-wall collisions = 39
+
+currentTimeStep = 64200; t = 71 [ 90% ]
+number of gas-wall collisions = 40
+
+currentTimeStep = 64400; t = 72 [ 91.25% ]
+number of gas-wall collisions = 41
+
+currentTimeStep = 64600; t = 73 [ 92.5% ]
+number of gas-wall collisions = 41
+
+currentTimeStep = 64800; t = 74 [ 93.75% ]
+number of gas-wall collisions = 44
+
+currentTimeStep = 65000; t = 75 [ 95% ]
+number of gas-wall collisions = 44
+
+currentTimeStep = 65200; t = 76 [ 96.25% ]
+number of gas-wall collisions = 44
+
+currentTimeStep = 65400; t = 77 [ 97.5% ]
+number of gas-wall collisions = 48
+
+currentTimeStep = 65600; t = 78 [ 98.75% ]
+number of gas-wall collisions = 52
+
+currentTimeStep = 65800; t = 79 [ 100% ]
+number of gas-wall collisions = 54
+
+Analysis Starts: 
+Number of Collisions Started: 137
+Number of Collisions Ended: 54
+
+Size of vN: 54
+No. of Collisions at top: 0
+No. of Collisions at bottom: 54
+No. of molecules between the incident angle range 13 and 17 are: 1
+No. of molecules between the incident angle range 28 and 32 are: 5
+No. of molecules between the incident angle range 43 and 47 are: 2
+No. of molecules between the incident angle range 58 and 62 are: 4
+No. of molecules between the incident angle range 73 and 77 are: 1
