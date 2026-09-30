@@ -1,0 +1,18 @@
+### diff v2.0.0:examples/Kerogen/in.equil inputs/in.equil
+17c17
+< processors      16 16 2
+---
+> processors      * * *
+74c74
+< run             200000 every 100000 "write_restart restart.*"
+---
+> run             20000 every 10000 "write_restart restart.*"
+### diff v2.0.0:examples/Kerogen/in.meas inputs/in.meas
+17c17
+< processors      16 16 2 
+---
+> processors      * * * 
+90c90
+< run             10000000 every 1000000 "write_restart restart.*"
+---
+> run             100000 every 10000 "write_restart restart.*"

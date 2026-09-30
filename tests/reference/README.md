@@ -7,6 +7,7 @@ within the tolerance stated in each case's README.
 | Directory | What it covers | Made from |
 |---|---|---|
 | `R1_beam_mini/` | Molecular-beam line (Ar on Pt): the frozen `LAMMPS_input/Beam_ArPt/in.beam` on a 1600-atom cut of the slab, three incident conditions plus one regression-only case, analysed with the frozen `extract_alpha.py` | `make.sh` in that directory |
+| `R2_examples_mini/` | One case from `examples/`: a short copy of `examples/Kerogen` (Fuel 2022), and the output of all 21 programs in `tools/` on its 11-column dump. The programs misread that dump (known issue KI-8), so this set checks that a rebuilt tool behaves exactly as before, not the physics | `make.sh` in that directory |
 | `R3_channel_mini/` | Channel set-up of Chen (2024), Chapter 3 (Ar between two explicit Pt walls, 300 K, equilibrium MD): a small copy of `LAMMPS_input/Explicit_layered`, and the output of all 21 programs in `tools/` | `make.sh` in that directory |
 | `FROZEN.sha256` | sha256 of every file used by the published papers (inputs, sources, tables) | `python3 tests/regress/check_frozen.py --write` |
 

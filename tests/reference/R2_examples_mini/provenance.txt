@@ -1,0 +1,70 @@
+date: 2026-09-30T03:46:55Z
+uname: Darwin 25.5.0 arm64
+v2 checkout: v2.0.0 e4ad3ce737b2b0c60e890071f17c87be6479079d
+np: 4
+OMP_NUM_THREADS: 1
+--- lmp -h | head -3
+
+Large-scale Atomic/Molecular Massively Parallel Simulator - 22 Jul 2025 - Update 4
+Git info (stable / stable_22Jul2025_update4-modified)
+--- mpirun --version
+mpirun (Open MPI) 5.0.9
+--- g++ --version
+Apple clang version 21.0.0 (clang-2100.1.1.101)
+Target: arm64-apple-darwin25.5.0
+--- processor grid
+  1 by 1 by 4 MPI processor grid
+  1 by 1 by 4 MPI processor grid
+--- md wall times
+equil_wall_s 56.5
+meas_wall_s 289.3
+--- tool build status (name rc warnings)
+pp_meas_ACs	0	0 warning lines
+pp_meas_AngularF	0	0 warning lines
+pp_meas_AngularP	0	0 warning lines
+pp_meas_Bins	0	0 warning lines
+pp_meas_Collisions	0	0 warning lines
+pp_meas_Contours	0	0 warning lines
+pp_meas_Correlation	0	0 warning lines
+pp_meas_Displacement	0	0 warning lines
+pp_meas_FAngular	0	0 warning lines
+pp_meas_GasOverTime	0	0 warning lines
+pp_meas_NearWall	0	0 warning lines
+pp_meas_PAngular	0	0 warning lines
+pp_meas_ResidenceTime	0	0 warning lines
+pp_meas_Traj	0	0 warning lines
+pp_meas_VDFF	0	0 warning lines
+pp_meas_VDFPi	0	0 warning lines
+pp_meas_VDFPr	0	0 warning lines
+pp_meas_penACs	0	0 warning lines
+pp_meas_penBeam	0	0 warning lines
+pp_meas_penOverall	0	0 warning lines
+pp_meas_wallTemp	0	0 warning lines
+--- repeat stage
+identical: 66 files
+--- v2.0.0 sources used (sha256)
+0d326e635099312cf297ab9d0686cfb943c0c04302139d5dcccbaf49240ac797  examples/Kerogen/initialisation/combine.cpp
+73facfa89e339126d4e819270dcdc63a4566699b577e1f7415355e9d4f82ea60  examples/Kerogen/initialisation/EFK_50A_0.80.xyz
+88e9f6439aeceab853b92d1aa2272bdb5e0a796fe0a6923814b177a4a14f647a  examples/Kerogen/in.equil
+c3d3f1519e9d901f47f05e45ec629a9f206e121fcb74dd00ce38eb6a1a29c3f3  examples/Kerogen/in.meas
+f29a12ebbaba5a2580f2e26c06c39632513ba74303bed93bfae21bcc5a720231  tools/pp_meas_ACs.cpp
+df8c50f2fd924dde741b3fd02dffffa0d3c7c0994e366ba2c93f404a690c2a98  tools/pp_meas_AngularF.cpp
+d58c62898850ba1cd2cc3277ba743267acbd3c0f709bf9eea3ad1e93372c97d1  tools/pp_meas_AngularP.cpp
+988112e111115c414954f08ce18b7507953ace3ba975d6f58708c4019a7bbcc3  tools/pp_meas_Bins.cpp
+6c52357371e6a2962d93df9813dc6b513a745be6656f8dd112a30f68ebe7e6e1  tools/pp_meas_Collisions.cpp
+4a22b62f5fc333a5b5ffd531eb412630052b958661c471ef6162e6e3304f6887  tools/pp_meas_Contours.cpp
+67dd3b7ed20ec0c745c3a56beaba0ca44fa4c56625607fc6932959302400acad  tools/pp_meas_Correlation.cpp
+ca4ae5f4541a9880fd001424402a5b12665c7e6e9d5076566c946a880bc27e4b  tools/pp_meas_Displacement.cpp
+32b1281c4bd3743c185ee8ade517f0e3508a28cfb25e4022e0599f78fcbb39d6  tools/pp_meas_FAngular.cpp
+2801dcaec54416178b6334d0b1ecaddc83ac80df362d49e66466af64ae7f8f3b  tools/pp_meas_GasOverTime.cpp
+ee3ec1d04c0485d6935519fbe50cab28616abdf8b5f7dd5ef0b5fcc71c6f2107  tools/pp_meas_NearWall.cpp
+9a39e4985c525b31df1f4ff81788443b4e38496032f2ea9b73fe285f9d8b6cc6  tools/pp_meas_PAngular.cpp
+52b7b74e89cbb89781e91b3db00f94160d020da93b2cb2fe8193dac33803102a  tools/pp_meas_ResidenceTime.cpp
+eaa089847ab72a17531370fd970f7e0c5dd308cdd749856f68e5a0493c6b6680  tools/pp_meas_Traj.cpp
+33633a01da8adc531aedf2f3053fef3b136543cdeab9e9c6cb42a7124c9205c5  tools/pp_meas_VDFF.cpp
+dfcdba49ebd446eb69d4c48e1cbd47bda2bc109ad11a1e8778b468e4a0a40b2c  tools/pp_meas_VDFPi.cpp
+cf7e1ab4c38d0d0b4b4d726d711aeac362f9a0c2b2757b31b6b81ed8aa56e14c  tools/pp_meas_VDFPr.cpp
+948e0d9a0e48edde10e575f5ee14f37fd162fd8f90976556e11bdaca4be15441  tools/pp_meas_penACs.cpp
+44d4ddcbd613777fe639eca387c662548b5fbf06d95a14c455fe9e2fccd2dddc  tools/pp_meas_penBeam.cpp
+ed2f0689b7b91e6e69a1736bb855235c9c17527687d1accc7876ec20fabcd583  tools/pp_meas_penOverall.cpp
+c7bbe3af51e9d1d612908c11990b377aeef6fa8fca2fac632d1a18c1bef6f953  tools/pp_meas_wallTemp.cpp

@@ -1,0 +1,14 @@
+{
+  "case": "R2_examples_mini (examples/Kerogen)",
+  "source": "tag v2.0.0 (e4ad3ce737b2b0c60e890071f17c87be6479079d)",
+  "np": 4,
+  "atoms_total": 6189,
+  "gas_atoms_per_frame": 87,
+  "dump_columns": 11,
+  "columns_the_tools_read": 16,
+  "frames_full_dump": 201,
+  "frames_regression_dump": 201,
+  "first_and_last_timestep": [20000, 120000],
+  "bytes": {"data.dat": 205215, "dump_equil_gas.lammpstrj": 87427, "dump_meas_gas.lammpstrj": 1605246},
+  "note": "the dump has 11 columns and every tool reads 16 (KI-8), so tool outputs are regression data only, not physical results"
+}

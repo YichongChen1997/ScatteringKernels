@@ -1,0 +1,5 @@
+201                  # nTimeSteps (frames to read)
+0.5  500  0          # deltaT[fs]  tSkip(dump every)  skipTimeStep(frames)
+15   100             # rCut (virtual plane z, A)  H [A]
+423  423             # Tg  Tw [K]
+16.043  12.0107      # mG  mW [g/mol]

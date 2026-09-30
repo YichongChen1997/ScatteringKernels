@@ -1,0 +1,103 @@
+==== pp_meas_ACs (last 4 stdout lines) ====
+Number of Collisions Ended: 0
+
+No. of Collisions at top: 0
+No. of Collisions at bottom: 0
+==== pp_meas_AngularF (last 4 stdout lines) ====
+Size of vN: 0
+No. of Collisions at top: 0
+No. of Collisions at bottom: 0
+Number of molecules for the full range angle: 0
+==== pp_meas_AngularP (last 4 stdout lines) ====
+No. of molecules between the incident angle range 28 and 32 are: 0
+No. of molecules between the incident angle range 43 and 47 are: 0
+No. of molecules between the incident angle range 58 and 62 are: 0
+No. of molecules between the incident angle range 73 and 77 are: 0
+==== pp_meas_Bins (last 4 stdout lines) ====
+currentTimeStep = 20000; t = 195 [ 97.5124% ]
+currentTimeStep = 20000; t = 197 [ 98.5075% ]
+currentTimeStep = 20000; t = 199 [ 99.5025% ]
+bin measurements
+==== pp_meas_Collisions (last 4 stdout lines) ====
+No. of Collisions at top: 0
+No. of Collisions at bottom: 0
+Collision Distribution Finished
+Analysis Ended
+==== pp_meas_Contours (last 4 stdout lines) ====
+currentTimeStep = 20000; t = 197 [ 98.5075% ]
+currentTimeStep = 20000; t = 198 [ 99.005% ]
+currentTimeStep = 20000; t = 199 [ 99.5025% ]
+currentTimeStep = 20000; t = 200 [ 100% ]
+==== pp_meas_Correlation (last 4 stdout lines) ====
+Number of Collisions Ended: 0
+
+No. of Collisions at top: 0
+No. of Collisions at bottom: 0
+==== pp_meas_Displacement (last 4 stdout lines) ====
+Size of xIn: 0
+Size of space vector: 0
+No. of Collisions at top: 0
+No. of Collisions at bottom: 0
+==== pp_meas_FAngular (last 4 stdout lines) ====
+Size of vN: 0
+No. of Collisions at top: 0
+No. of Collisions at bottom: 0
+Number of molecules for the full range angle: 0
+==== pp_meas_GasOverTime (last 4 stdout lines) ====
+currentTimeStep = 20000; t = 193 [ 96.5174% ]
+currentTimeStep = 20000; t = 195 [ 97.5124% ]
+currentTimeStep = 20000; t = 197 [ 98.5075% ]
+currentTimeStep = 20000; t = 199 [ 99.5025% ]
+==== pp_meas_NearWall (last 4 stdout lines) ====
+currentTimeStep = 20000; t = 198 [ 99.005% ]
+currentTimeStep = 20000; t = 199 [ 99.5025% ]
+currentTimeStep = 20000; t = 200 [ 100% ]
+Create xyz dump file
+==== pp_meas_PAngular (last 4 stdout lines) ====
+No. of molecules between the incident angle range 28 and 32 are: 0
+No. of molecules between the incident angle range 43 and 47 are: 0
+No. of molecules between the incident angle range 58 and 62 are: 0
+No. of molecules between the incident angle range 73 and 77 are: 0
+==== pp_meas_ResidenceTime (last 4 stdout lines) ====
+Size of tOut: 0
+No. of Collisions at top: 0
+No. of Collisions at bottom: 0
+Maximum abosorped time = 0
+==== pp_meas_Traj (last 4 stdout lines) ====
+currentTimeStep = 20000; t = 198 [ 99.005% ]
+currentTimeStep = 20000; t = 199 [ 99.5025% ]
+currentTimeStep = 20000; t = 200 [ 100% ]
+Create ovito dump file
+==== pp_meas_VDFF (last 4 stdout lines) ====
+Maximum vTxi value = 0
+Minimum vTxi value = 0
+Maximum vTx value = 0
+Minimum vTx value = 0
+==== pp_meas_VDFPi (last 4 stdout lines) ====
+No. molecules within Tangential velocity range 1.6 and 1.8 are: 0
+No. molecules within Tangential velocity range 1.7 and 1.9 are: 0
+No. molecules within Tangential velocity range 1.8 and 2 are: 0
+No. molecules within Tangential velocity range 1.9 and 2.1 are: 0
+==== pp_meas_VDFPr (last 4 stdout lines) ====
+No. molecules within Tangential velocity range 1.6 and 1.8 are: 0
+No. molecules within Tangential velocity range 1.7 and 1.9 are: 0
+No. molecules within Tangential velocity range 1.8 and 2 are: 0
+No. molecules within Tangential velocity range 1.9 and 2.1 are: 0
+==== pp_meas_penACs (last 4 stdout lines) ====
+Analysis Starts: 
+Number of Collisions Started: 0
+Number of Collisions Ended: 0
+
+==== pp_meas_penBeam (last 4 stdout lines) ====
+Analysis Starts: 
+Number of Collisions Started: 0
+Number of Collisions Ended: 0
+
+==== pp_meas_penOverall (last 4 stdout lines) ====
+Analysis Starts: 
+Number of Collisions Started: 0
+Number of Collisions Ended: 0
+
+==== pp_meas_wallTemp (last 4 stdout lines) ====
+currentTimeStep = 2; t = 0 [ 50% ]
+currentTimeStep = 2; t = 1 [ 100% ]
