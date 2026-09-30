@@ -21,6 +21,9 @@ LAMMPS_input/Beam_ArPt/__pycache__/
 # never commit virtual environments
 initialisation/SurfGenerator/myenv/
 
+# build output of the Makefile
+build/
+
 # LaTeX build files and editor settings
 *.aux
 *.bbl
@@ -32,6 +35,12 @@ initialisation/SurfGenerator/myenv/
 initialisation/SurfGenerator/SpectralCharacterisation/*.log
 .vscode/
 
+# notes and example input of the post-processing tools
+!tools/README.txt
+
 # reference answers are small text files and are meant to be tracked
 !tests/reference/**
 tests/**/__pycache__/
+
+# local assistant settings
+.claude/

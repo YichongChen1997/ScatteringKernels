@@ -16,7 +16,38 @@ jobs:
       - name: No large or forbidden files
         run: python3 tests/regress/check_hygiene.py
       - name: Stored reference outputs match their checksums
-        run: cd tests/reference/R3_channel_mini/mini && sha256sum -c SHA256SUMS
+        run: |
+          (cd tests/reference/R2_examples_mini/mini && sha256sum -c --quiet SHA256SUMS)
+          (cd tests/reference/R3_channel_mini/mini && sha256sum -c --quiet SHA256SUMS)
       - name: Any change to the references is recorded in CHANGES.md
         if: github.event_name == 'pull_request'
         run: python3 tests/regress/check_reference_changes.py origin/${{ github.base_ref }}
+
+  legacy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compiler
+        run: g++ --version
+      - name: Compile every tool in tools/ (no flags, as in v2.0.0)
+        run: make
+      - name: Run the tools on the reference dumps and compare with a tolerance
+        run: make test
+
+  # The reference outputs were made with Apple clang 21 on macOS 26 (arm64).
+  # A runner with another Xcode or macOS may differ in a few outputs that
+  # depend on uninitialised values (see docs/legacy_tools.md, KI-4 and KI-7),
+  # so this job is for information only and does not block a pull request.
+  legacy-exact:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compiler
+        run: g++ --version
+      - name: Compile every tool in tools/ (no flags, as in v2.0.0)
+        run: make
+      - name: Run the tools on the reference dumps and compare byte for byte
+        run: make test-exact

@@ -27,6 +27,26 @@ LAMMPS_src          - implementation of scattering kernels in LAMMPS
 SPARTA_input        - example SPARTA input decks, wall model tables and post-processing
 SPARTA_src          - implementation of scattering kernels in SPARTA
 tools               - post-processing of LAMMPS dump files      
-Makefile            - compilation of various post-processing C++ files       
+Makefile            - builds the programs in tools/ and runs the regression checks
+docs                - documentation, including docs/legacy_tools.md for the programs in tools/
+scripts             - helper scripts, including scripts/rundir.mk for simulation directories
+tests               - reference answers and regression checks
 
 ![Flowchart showing the steps involved in an MD simulation of gas-surface interactions using LAMMPS.](FlowChart.png)
+
+## Building the post-processing tools
+
+The programs in `tools/` read LAMMPS dump files and write accommodation
+coefficients, velocity and angle distributions, density profiles and more.
+They need only a C++ compiler and make:
+
+```bash
+make            # compiles every tools/*.cpp into build/bin/
+make test       # checks the repository, then runs the tools on stored reference dumps
+make help       # the other targets
+```
+
+The programs are compiled with no flags, as they were for the published
+results. [docs/legacy_tools.md](docs/legacy_tools.md) explains what each one
+computes, which files it reads and writes, how to fill in
+`Specification.dat`, and the known issues.

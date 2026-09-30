@@ -1,0 +1,5 @@
+1151                 # nTimeSteps: frames to read; must equal the number of frames in dump_meas_gas.lammpstrj
+1.0  200  0          # deltaT [fs] (MD time step), tSkip (time steps between frames), skipTimeStep (frames left out at the start)
+12   30              # rCut [A] (height of the virtual plane above the bottom surface, z = 0), H [A] (channel height)
+300  300             # Tg, Tw [K] (gas and wall temperature; the tools use only Tw)
+39.948  195.084      # mG, mW [g/mol] (mass of a gas atom and of a wall atom: Ar, Pt)

@@ -54,6 +54,8 @@ python3 tests/regress/check_frozen.py      # frozen paper files unchanged, none 
 python3 tests/regress/check_hygiene.py     # no large data or model files tracked
 python3 tests/regress/check_reference_changes.py origin/main   # CHANGES.md updated with any reference change
 (cd tests/reference/R3_channel_mini/mini && shasum -a 256 -c SHA256SUMS)
+make test          # rebuild tools/ and compare their output on R2 and R3 (tolerance)
+make test-exact    # the same, byte for byte (same compiler as the stored run)
 ```
 
 ## Changing a reference
