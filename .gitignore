@@ -21,6 +21,17 @@ LAMMPS_input/Beam_ArPt/__pycache__/
 # never commit virtual environments
 initialisation/SurfGenerator/myenv/
 
+# LaTeX build files and editor settings
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+*-eps-converted-to.pdf
+initialisation/SurfGenerator/SpectralCharacterisation/*.log
+.vscode/
+
 # reference answers are small text files and are meant to be tracked
 !tests/reference/**
 tests/**/__pycache__/
